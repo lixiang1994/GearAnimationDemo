@@ -8,24 +8,60 @@
 
 #import "GearView.h"
 
-@implementation GearView
+@interface GearView ()
 
-- (instancetype)init
+@property (nonatomic , assign ) CGPathRef gearPath;
+
+@end
+
+@implementation GearView
 {
+    
+}
+
++ (GearView *)gearWithToothCount:(NSInteger)toothCount
+                     ToothHeight:(CGFloat)toothHeight
+                   ToothMaxWidth:(CGFloat)toothMaxWidth
+                   ToothMinWidth:(CGFloat)toothMinWidth{
+    
+    GearView *view = [[GearView alloc] initWithToothCount:toothCount ToothHeight:toothHeight ToothMaxWidth:toothMaxWidth ToothMinWidth:toothMinWidth];
+    
+    return view;
+}
+
+- (instancetype)initWithToothCount:(NSInteger)toothCount
+                       ToothHeight:(CGFloat)toothHeight
+                     ToothMaxWidth:(CGFloat)toothMaxWidth
+                     ToothMinWidth:(CGFloat)toothMinWidth{
+    
     self = [super init];
     if (self) {
         
         self.backgroundColor = [UIColor clearColor];
         
+        _toothCount = toothCount > 2 ? toothCount : 2;
+        
+        _toothHeight = toothHeight;
+        
+        _toothMaxWidth = toothMaxWidth;
+        
+        _toothMinWidth = toothMinWidth > toothMaxWidth ? toothMaxWidth : toothMinWidth;
+        
+        // 计算视图大小
+        
+        CGFloat perimeter = _toothCount * (_toothMaxWidth + _toothMinWidth);
+        
+        CGFloat size = perimeter / M_PI;
+        
+        size += _toothHeight * 2;
+        
+        CGRect selfFrame = self.frame;
+        
+        selfFrame.size = CGSizeMake(size, size);
+        
+        self.frame = selfFrame;
+        
         // 默认设置
-        
-        _toothCount = 10;
-        
-        _toothHeight = 20.0f;
-        
-        _toothMaxWidth = 20.0f;
-        
-        _toothMinWidth = 10.0f;
         
         _fillColor = [UIColor lightGrayColor];
         
@@ -33,48 +69,14 @@
         
         _centerWitdh = 1.0f;
         
-        [self updateFrame];
+        [self gearPath];
+        
+        [self setNeedsDisplay];
     }
     return self;
 }
 
 #pragma mark - Setter
-
-- (void)setToothCount:(NSInteger)toothCount{
-    
-    _toothCount = toothCount;
-    
-    [self updateFrame];
-    
-    [self setNeedsDisplay];
-}
-
-- (void)setToothHeight:(CGFloat)toothHeight{
-    
-    _toothHeight = toothHeight;
-    
-    [self updateFrame];
-    
-    [self setNeedsDisplay];
-}
-
-- (void)setToothMinWidth:(CGFloat)toothMinWidth{
-    
-    _toothMinWidth = toothMinWidth;
-    
-    [self updateFrame];
-    
-    [self setNeedsDisplay];
-}
-
-- (void)setToothMaxWidth:(CGFloat)toothMaxWidth{
-    
-    _toothMaxWidth = toothMaxWidth;
-    
-    [self updateFrame];
-    
-    [self setNeedsDisplay];
-}
 
 - (void)setCenterRadius:(CGFloat)centerRadius{
     
@@ -97,24 +99,6 @@
     [self setNeedsDisplay];
 }
 
-#pragma mark - 更新frame
-
-- (void)updateFrame{
-    
-    // 计算视图大小
-    
-    CGFloat perimeter = _toothCount * (_toothMaxWidth + _toothMinWidth);
-    
-    CGFloat size = perimeter / M_PI;
-    
-    size += _toothHeight * 2;
-    
-    CGRect selfFrame = self.frame;
-    
-    selfFrame.size = CGSizeMake(size, size);
-    
-    self.frame = selfFrame;
-}
 
 #pragma mark - 原理拆分演示
 
@@ -183,7 +167,7 @@
             
             CGFloat endAngle = maxAngle * i + minAngle * (i + 1); // 结束弧度
             
-            CGContextAddArc(context, width * 0.5f, height * 0.5f, interiorRadius, startAngle - M_PI_2, endAngle - M_PI_2 , 0); // 这里减二分之一π 是因为起始的0度位置不同
+            CGContextAddArc(context, width * 0.5f, height * 0.5f, interiorRadius, startAngle, endAngle , 0);
             
             CGContextStrokePath(context);
             
@@ -228,7 +212,7 @@
             
             CGFloat endAngle = tempMaxAngle * i + tempMinAngle * (i + 1) + placeholderAngle; // 结束弧度
             
-            CGContextAddArc(context, width * 0.5f, height * 0.5f, exteriorRadius, startAngle - M_PI_2, endAngle - M_PI_2 , 0); // 这里减二分之一π 是因为起始的0度位置不同
+            CGContextAddArc(context, width * 0.5f, height * 0.5f, exteriorRadius, startAngle, endAngle , 0);
             
             CGContextStrokePath(context);
             
@@ -300,18 +284,6 @@
     
     CGFloat height = rect.size.height;
     
-    CGFloat exteriorRadius = width * 0.5f; //外圆半径
-    
-    CGFloat interiorRadius = (width - self.toothHeight * 2) * 0.5f; //内圆半径
-    
-    CGFloat minAndMaxRatio = (self.toothMinWidth / (self.toothMinWidth + self.toothMaxWidth)); //最小宽度与最大宽度的比例
-    
-    CGFloat averageAngle = (M_PI * 2) / self.toothCount; //平均每个的弧度 (平均弧度 = 最小弧度 + 最大弧度)
-    
-    CGFloat minAngle = averageAngle * minAndMaxRatio; //最小弧度
-    
-    CGFloat maxAngle = averageAngle - minAngle; //最大弧度
-    
     
     CGContextRef context = UIGraphicsGetCurrentContext();
     
@@ -323,11 +295,311 @@
     
     CGContextSetFillColorWithColor(context, self.fillColor.CGColor);
     
+    // 齿轮
+    
+    CGContextAddPath(context, self.gearPath);
+    
+    CGContextClosePath(context);
+    
+    CGContextFillPath(context);
+    
+    CGContextStrokePath(context);
+    
+    // 圆心
+    
+    CGContextSetStrokeColorWithColor(context, [UIColor whiteColor].CGColor);
+    
+    CGContextSetLineWidth(context, self.centerWitdh);
+    
+    CGContextAddArc(context, width * 0.5f, height * 0.5f, self.centerRadius, 0.0f, M_PI * 2, 0);
+    
+    CGContextStrokePath(context);
+    
+    /**
+    
+    CGFloat exteriorRadius = width * 0.5f; //外圆半径
+    
+    CGFloat interiorRadius = (width - self.toothHeight * 2) * 0.5f; //内圆半径
+    
+    // 轮齿缺口辅助线
     {
+        CGContextSetStrokeColorWithColor(context, [UIColor redColor].CGColor);
+        
+        CGContextSetLineWidth(context, 1.0f);
+        
+        CGFloat list[] = {2.0f, 2.0f};
+        
+        CGContextSetLineDash(context, 0, list, 2);
+        
+        for (NSNumber *angle in self.toothAngleArray) {
+            
+            CGPoint point = [GearView getPointWithRadius:exteriorRadius Angle:[angle floatValue]];
+            
+            CGContextMoveToPoint(context, width * 0.5f, height * 0.5f);
+            
+            CGContextAddLineToPoint(context, point.x , point.y);
+            
+            CGContextStrokePath(context);
+        }
+        
+        CGContextSetStrokeColorWithColor(context, [UIColor blueColor].CGColor);
+        
+        for (NSNumber *angle in self.gapAngleArray) {
+            
+            CGPoint point = [GearView getPointWithRadius:interiorRadius Angle:[angle floatValue]];
+            
+            CGContextMoveToPoint(context, width * 0.5f, height * 0.5f);
+            
+            CGContextAddLineToPoint(context, point.x + self.toothHeight , point.y + self.toothHeight);
+            
+            CGContextStrokePath(context);
+        }
+    }
+    
+    // 水平垂直辅助线
+    {
+        CGContextSetLineWidth(context, 1.0f / [[UIScreen mainScreen] scale]);
+        
+        CGContextSetStrokeColorWithColor(context, [UIColor greenColor].CGColor);
+        
+        CGFloat list[] = {2.0f, 2.0f};
+        
+        CGContextSetLineDash(context, 0, list, 2);
+        
+        CGContextMoveToPoint(context, width * 0.5f, 0.0);
+        
+        CGContextAddLineToPoint(context, width * 0.5f , height);
+        
+        CGContextStrokePath(context);
+        
+        CGContextMoveToPoint(context, 0.0f, height * 0.5f);
+        
+        CGContextAddLineToPoint(context, width, height * 0.5f);
+        
+        CGContextStrokePath(context);
+    }
+     
+     */
+}
+
+#pragma mark - 根据半径和弧度获取坐标
+
++ (CGPoint)getPointWithRadius:(CGFloat)radius Angle:(CGFloat)angle{
+    
+    NSInteger index = (angle) / M_PI_2; //区分在第几象限内
+    
+    CGFloat needAngle = angle - index * M_PI_2; //用于计算正弦/余弦的角度
+    
+    CGFloat x = 0, y = 0;
+    
+    // 因为贝塞尔绘制的0度起始位置与正常0度位置偏移了90度, 所以为了方便计算这里同步0度起始位置
+    
+    switch (index) {
+        
+        case 0:
+            NSLog(@"第二象限");
+            x = radius + cosf(needAngle)*radius;
+            y = radius + sinf(needAngle)*radius;
+            break;
+        case 1:
+            NSLog(@"第三象限");
+            x = radius - sinf(needAngle)*radius;
+            y = radius + cosf(needAngle)*radius;
+            break;
+        case 2:
+            NSLog(@"第四象限");
+            x = radius - cosf(needAngle)*radius;
+            y = radius - sinf(needAngle)*radius;
+            break;
+        case 3:
+            NSLog(@"第一象限");
+            x = radius + sinf(needAngle)*radius;
+            y = radius - cosf(needAngle)*radius;
+            break;
+            
+        default:
+            break;
+    }
+    
+    return CGPointMake(x, y);
+}
+
+#pragma mark - 根据圆心与另一个坐标位置获取相对于圆心的弧度
+
++ (CGFloat)getAngleWithCenter:(CGPoint)center Point:(CGPoint)point{
+    
+    /**
+     
+     根据圆心和一个点的坐标 求弧度
+     
+     数学公式: arctan(y2 - y1) / (x2 - x1)
+     
+     C函数:
+     angel = Math.atan2(y,x)
+     x 指定两个点横坐标的差
+     y 指定两个点纵坐标的差
+     */
+    
+    return atan2f(center.y - point.y, center.x - point.x);
+}
+
+- (void)configDrivenGearPointWithDrivenGear:(GearView *)drivenGear Angle:(CGFloat)angle{
+    
+    [self configDrivenGearPointWithDrivenGear:drivenGear Angle:angle Spacing:1.0f];
+}
+
+- (void)configDrivenGearPointWithDrivenGear:(GearView *)drivenGear Angle:(CGFloat)angle Spacing:(CGFloat)spacing{
+    
+    if (angle < 0 || angle > 360) angle = 0;
+    
+    CGFloat mainRadius = self.bounds.size.width * 0.5f; //主动齿轮半径
+    
+    CGFloat drivenRadius = drivenGear.bounds.size.width * 0.5f; //从动齿轮半径
+    
+    CGFloat minToothHeight = MIN(self.toothHeight, drivenGear.toothHeight); //最小的轮齿高度
+    
+    if (minToothHeight < spacing) spacing = 1.0f;
+    
+    minToothHeight = minToothHeight - spacing; //去除间隙
+    
+    // 获取从动齿轮当前弧度坐标
+    
+    CGPoint point = [GearView getPointWithRadius:mainRadius + drivenRadius - minToothHeight Angle:M_PI / 180 * angle];
+    
+    // 根据主动齿轮中心点坐标计算出从动齿轮中心点坐标 (包括轮齿间距)
+    
+    CGPoint drivenPoint = CGPointMake(point.x + self.center.x - drivenRadius - mainRadius + minToothHeight, point.y + self.center.y - drivenRadius - mainRadius + minToothHeight);
+    
+    drivenGear.center = drivenPoint;
+    
+    
+    // 计算从动齿轮初始弧度 以保证轮齿咬合
+    
+    if (self.toothAngleArray.count == 0 || self.gapAngleArray.count == 0) return ;
+    
+    // 获取与主动齿轮最接近的轮齿或缺口弧度
+    
+    NSNumber *mainNearestAngleNumber = [self getNearestNumberWithArrayA:self.toothAngleArray ArrayB:self.gapAngleArray Number:@((M_PI / 180 * angle))];
+    
+    CGFloat mainNearestAngle = [mainNearestAngleNumber floatValue];
+    
+    BOOL isTooth = [self.toothAngleArray containsObject:mainNearestAngleNumber]; // 是否为轮齿 用于判断主动齿轮最近接的位置是轮齿还是缺口
+    
+    // 计算主动齿轮最接近的坐标点 (包括两个齿轮的间距)
+    
+    CGPoint mainNearestPoint = [GearView getPointWithRadius:isTooth ? mainRadius + spacing : mainRadius + spacing - self.toothHeight Angle:mainNearestAngle];
+    
+    mainNearestPoint = CGPointMake(mainNearestPoint.x + self.center.x - mainRadius - spacing, mainNearestPoint.y + self.center.y - mainRadius - spacing);
+    
+    if (!isTooth) mainNearestPoint.x += self.toothHeight;
+    
+    if (!isTooth) mainNearestPoint.y += self.toothHeight;
+    
+    // 根据主动齿轮最近的坐标 计算相对于从动齿轮最接近的坐标点的弧度以及偏差
+    
+    CGFloat drivenNearestAngle = [GearView getAngleWithCenter:drivenPoint Point:mainNearestPoint] + M_PI;
+    
+    drivenNearestAngle = drivenNearestAngle - [[self getNearestNumberWithArray:isTooth ? drivenGear.gapAngleArray : drivenGear.toothAngleArray Number:@(drivenNearestAngle)] floatValue]; //从动齿轮偏差 = 主动齿轮最接近点的坐标较从动齿轮的弧度 - 从动齿轮的轮齿或缺口最接近的弧度
+    
+    drivenGear.transform = CGAffineTransformRotate(self.transform, drivenNearestAngle);
+    
+    // 计算从动齿轮最接近的坐标 (调试使用)
+    
+    CGPoint drivenNearestPoint = [GearView getPointWithRadius:isTooth ? drivenRadius - drivenGear.toothHeight : drivenRadius Angle:drivenNearestAngle];
+    
+    drivenNearestPoint = CGPointMake(drivenNearestPoint.x + drivenPoint.x - drivenRadius, drivenNearestPoint.y + drivenPoint.y  - drivenRadius);
+    
+    if (isTooth) drivenNearestPoint.x += drivenGear.toothHeight;
+    
+    if (isTooth) drivenNearestPoint.y += drivenGear.toothHeight;
+    
+}
+
+#pragma mark - 获取数组中最接近的值
+
+- (NSNumber *)getNearestNumberWithArray:(NSArray <NSNumber *>*)array Number:(NSNumber *)number{
+    
+    NSMutableArray *tempArray = [NSMutableArray array];
+    
+    for (NSNumber *item in array) {
+        
+        // 计算相差的绝对值
+        
+        [tempArray addObject:@(fabs([item floatValue] - [number floatValue]))];
+    }
+    
+    NSNumber *min = [tempArray valueForKeyPath:@"@min.self"];
+    
+    return array[[tempArray indexOfObject:min]];
+}
+
+- (NSNumber *)getNearestNumberWithArrayA:(NSArray <NSNumber *>*)arrayA ArrayB:(NSArray <NSNumber *>*)arrayB Number:(NSNumber *)number{
+    
+    NSMutableArray *tempArrayA = [NSMutableArray array];
+    
+    for (NSNumber *item in arrayA) {
+        
+        // 计算相差的绝对值
+        
+        [tempArrayA addObject:@(fabs([item floatValue] - [number floatValue]))];
+    }
+    
+    NSNumber *minA = [tempArrayA valueForKeyPath:@"@min.self"];
+    
+    
+    NSMutableArray *tempArrayB = [NSMutableArray array];
+    
+    for (NSNumber *item in arrayB) {
+        
+        // 计算相差的绝对值
+        
+        [tempArrayB addObject:@(fabs([item floatValue] - [number floatValue]))];
+    }
+    
+    NSNumber *minB = [tempArrayB valueForKeyPath:@"@min.self"];
+    
+    
+    if ([minA compare:minB] == NSOrderedAscending) {
+        
+        return arrayA[[tempArrayA indexOfObject:minA]];
+        
+    } else {
+     
+        return arrayB[[tempArrayB indexOfObject:minB]];
+    }
+    
+}
+
+#pragma mark - LazyLoading
+
+- (CGPathRef)gearPath{
+    
+    if (!_gearPath) {
+        
         CGMutablePathRef path = CGPathCreateMutable();
         
+        CGFloat width = self.frame.size.width;
+        
+        CGFloat height = self.frame.size.height;
+        
+        CGFloat exteriorRadius = width * 0.5f; //外圆半径
+        
+        CGFloat interiorRadius = (width - self.toothHeight * 2) * 0.5f; //内圆半径
+        
+        CGFloat minAndMaxRatio = (self.toothMinWidth / (self.toothMinWidth + self.toothMaxWidth)); //最小宽度与最大宽度的比例
+        
+        CGFloat averageAngle = (M_PI * 2) / self.toothCount; //平均每个的弧度 (平均弧度 = 最小弧度 + 最大弧度)
+        
+        CGFloat minAngle = averageAngle * minAndMaxRatio; //最小弧度
+        
+        CGFloat maxAngle = averageAngle - minAngle; //最大弧度
+        
+        NSMutableArray *toothAngleArray = [NSMutableArray array];
+        
+        NSMutableArray *gapAngleArray = [NSMutableArray array];
+        
         for (NSInteger i = 0 ; i < self.toothCount; i++) {
-         
+            
             {
                 // 内圆
                 
@@ -336,6 +608,8 @@
                 CGFloat endAngle = maxAngle * i + minAngle * (i + 1); // 结束弧度
                 
                 CGPathAddArc(path, NULL, width * 0.5f, height * 0.5f, interiorRadius, startAngle, endAngle, 0);
+                
+                [gapAngleArray addObject:@(startAngle + (endAngle - startAngle) * 0.5f)];
             }
             
             {
@@ -359,67 +633,22 @@
                 CGFloat endAngle = tempMaxAngle * i + tempMinAngle * (i + 1) + placeholderAngle; // 结束弧度
                 
                 CGPathAddArc(path, NULL, width * 0.5f, height * 0.5f, exteriorRadius, startAngle, endAngle , 0);
+                
+                [toothAngleArray addObject:@(startAngle + (endAngle - startAngle) * 0.5f)];
             }
             
         }
         
-        CGContextAddPath(context, path);
+        _toothAngleArray = [toothAngleArray copy];
         
-        CGContextClosePath(context);
+        _gapAngleArray = [gapAngleArray copy];
         
-        CGContextFillPath(context);
-        
-        CGContextStrokePath(context);
+        _gearPath = CGPathCreateCopy(path);
         
         CGPathRelease(path);
     }
     
-    // 圆心
-    
-    CGContextSetStrokeColorWithColor(context, [UIColor whiteColor].CGColor);
-    
-    CGContextSetLineWidth(context, self.centerWitdh);
-    
-    CGContextAddArc(context, width * 0.5f, height * 0.5f, self.centerRadius, 0.0f, M_PI * 2, 0);
-    
-    CGContextStrokePath(context);
-}
-
-+ (CGPoint)getPointWithRadius:(CGFloat)radius Angle:(CGFloat)angle{
-    
-    NSInteger index = (angle) / M_PI_2; //区分在第几象限内
-    
-    CGFloat needAngle = angle - index * M_PI_2; //用于计算正弦/余弦的角度
-    
-    CGFloat x = 0,y = 0;
-    
-    switch (index) {
-        case 0:
-            NSLog(@"第一象限");
-            x = radius + sinf(needAngle)*radius;
-            y = radius - cosf(needAngle)*radius;
-            break;
-        case 1:
-            NSLog(@"第二象限");
-            x = radius + cosf(needAngle)*radius;
-            y = radius + sinf(needAngle)*radius;
-            break;
-        case 2:
-            NSLog(@"第三象限");
-            x = radius - sinf(needAngle)*radius;
-            y = radius + cosf(needAngle)*radius;
-            break;
-        case 3:
-            NSLog(@"第四象限");
-            x = radius - cosf(needAngle)*radius;
-            y = radius - sinf(needAngle)*radius;
-            break;
-            
-        default:
-            break;
-    }
-    
-    return CGPointMake(x, y);
+    return _gearPath;
 }
 
 @end

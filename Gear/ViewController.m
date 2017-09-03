@@ -27,6 +27,9 @@
 @end
 
 @implementation ViewController
+{
+    CGFloat drivenGear_A_Angle;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -35,13 +38,13 @@
     
     // 主动齿轮
     
-    _mainGear = [[GearView alloc] init];
+    _mainGear = [GearView gearWithToothCount:10 ToothHeight:10 ToothMaxWidth:20 ToothMinWidth:10];
     
     _mainGear.center = CGPointMake(self.view.frame.size.width * 0.5f, self.view.frame.size.height * 0.5f);
     
     _mainGear.fillColor = [UIColor darkGrayColor];
     
-    _mainGear.centerRadius = 20.0f;
+    _mainGear.centerRadius = 10.0f;
     
     _mainGear.centerWitdh = 5.0f;
     
@@ -49,9 +52,7 @@
     
     // 从动齿轮A
     
-    _drivenGear_A = [[GearView alloc] init];
-    
-    _drivenGear_A.toothCount = 28;
+    _drivenGear_A = [GearView gearWithToothCount:38 ToothHeight:10 ToothMaxWidth:20 ToothMinWidth:10];
     
     _drivenGear_A.fillColor = [UIColor lightGrayColor];
     
@@ -61,24 +62,9 @@
     
     [self.view addSubview:_drivenGear_A];
     
-    // 根据主齿轮位置 设置从动齿轮位置 轮齿之间保留缝隙
+    [self.mainGear configDrivenGearPointWithDrivenGear:_drivenGear_A Angle:0 Spacing:5.0f];
     
-    CGFloat x = self.view.frame.size.width - (_mainGear.center.x + _mainGear.frame.size.width * 0.5f + _drivenGear_A.frame.size.width * 0.5f - _mainGear.toothHeight * 0.9f);
-    
-    _drivenGear_A.center = CGPointMake(x, _mainGear.center.y);
-    
-    // 调整初始角度 对齐主齿轮
-    
-    _drivenGear_A.transform = CGAffineTransformRotate(_drivenGear_A.transform, M_PI_4 * 0.05f);
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    [self.view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction)]];
     
     
     // 计数器
@@ -89,12 +75,7 @@
 
     [_timer setFireDate:[NSDate date]];
     
-    // 延迟暂停
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        
-        [self.timer setFireDate:[NSDate distantFuture]];
-    });
+//    [self.timer setFireDate:[NSDate distantFuture]];
 }
 
 #pragma mark - 计时器事件
@@ -116,6 +97,17 @@
     self.drivenGear_A.transform = CGAffineTransformRotate(self.drivenGear_A.transform, ((speed * self.mainGear.toothCount) / self.drivenGear_A.toothCount));
     
     [UIView commitAnimations];
+}
+
+- (void)tapAction{
+    
+    [self.timer setFireDate:[NSDate distantFuture]];
+    
+    self.mainGear.transform = CGAffineTransformIdentity;
+    
+    [self.mainGear configDrivenGearPointWithDrivenGear:_drivenGear_A Angle:arc4random() % 360];
+    
+    [self.timer setFireDate:[NSDate date]];
 }
 
 - (void)didReceiveMemoryWarning {
