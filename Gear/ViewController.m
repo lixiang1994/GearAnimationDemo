@@ -44,7 +44,7 @@
     
     _mainGear.fillColor = [UIColor darkGrayColor];
     
-    _mainGear.centerRadius = 10.0f;
+    _mainGear.centerRadius = 20.0f;
     
     _mainGear.centerWitdh = 5.0f;
     
@@ -62,7 +62,11 @@
     
     [self.view addSubview:_drivenGear_A];
     
+    // 设置从动齿轮位置
+    
     [self.mainGear configDrivenGearPointWithDrivenGear:_drivenGear_A Angle:0 Spacing:5.0f];
+    
+    // 添加单击手势
     
     [self.view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction)]];
     
