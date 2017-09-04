@@ -24,6 +24,8 @@
 
 @property (nonatomic , assign ) CGFloat centerWitdh; //圆心线宽度
 
+@property (nonatomic , strong ) NSMutableArray *drivenGears; //从动齿轮数组
+
 /**
  初始化齿轮视图
 
@@ -39,30 +41,56 @@
                    ToothMinWidth:(CGFloat)toothMinWidth;
 
 /**
- 设置从动齿轮位置
+ 旋转 (仅主动齿轮调用)
+
+ @param angle 旋转角度 0 - 360度
+ */
+- (void)rotationWithAngle:(CGFloat)angle;
+
+/**
+ 旋转动画
+ 
+ @param duration 每旋转90度的动画时长
+ */
+- (void)rotationAnimationWithDuration:(CGFloat)duration;
+
+/**
+ 移除旋转动画
+ */
+- (void)removeRotationAnimation;
+
+/**
+ 添加从动齿轮
 
  @param drivenGear 从动齿轮
  @param angle 所在角度 0 - 360度
  */
-- (void)configDrivenGearPointWithDrivenGear:(GearView *)drivenGear Angle:(CGFloat)angle;
+- (void)addDrivenGear:(GearView *)drivenGear Angle:(CGFloat)angle;
 
 /**
- 设置从动齿轮位置
+ 添加从动齿轮
  
  @param drivenGear 从动齿轮
  @param angle 所在角度 0 - 360度
  @param spacing 齿轮间距 (不得小于最小轮齿高度)
  */
-- (void)configDrivenGearPointWithDrivenGear:(GearView *)drivenGear Angle:(CGFloat)angle Spacing:(CGFloat)spacing;
+- (void)addDrivenGear:(GearView *)drivenGear Angle:(CGFloat)angle Spacing:(CGFloat)spacing;
 
+/**
+ 移除从动齿轮
 
+ @param drivenGear 从动齿轮
+ */
+- (void)removeDrivenGear:(GearView *)drivenGear;
 
 
 
 #pragma mark - 内部使用
 
-@property (nonatomic , strong , readonly ) NSArray *toothAngleArray; //轮齿角度数组
+@property (nonatomic , strong , readonly ) NSArray *toothRadianArray; //轮齿弧度数组
 
-@property (nonatomic , strong , readonly ) NSArray *gapAngleArray; //缺口角度数组
+@property (nonatomic , strong , readonly ) NSArray *gapRadianArray; //缺口弧度数组
+
+@property (nonatomic , assign ) CGFloat initialRadian; //初始
 
 @end

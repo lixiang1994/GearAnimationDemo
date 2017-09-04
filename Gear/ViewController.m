@@ -16,13 +16,7 @@
 
 @property (nonatomic , strong ) GearView *mainGear;//主齿轮
 
-@property (nonatomic , strong ) GearView *drivenGear_A;//从动齿轮A
-
-@property (nonatomic , strong ) GearView *drivenGear_B;//从动齿轮B
-
-@property (nonatomic , strong ) GearView *drivenGear_C;//从动齿轮C
-
-@property (nonatomic , strong ) GearView *drivenGear_D;//从动齿轮D
+@property (nonatomic , strong ) UISlider *sliderView; //滑块视图
 
 @end
 
@@ -38,80 +32,128 @@
     
     // 主动齿轮
     
-    _mainGear = [GearView gearWithToothCount:10 ToothHeight:10 ToothMaxWidth:20 ToothMinWidth:10];
+    _mainGear = [GearView gearWithToothCount:10 ToothHeight:7 ToothMaxWidth:10 ToothMinWidth:3];
     
     _mainGear.center = CGPointMake(self.view.frame.size.width * 0.5f, self.view.frame.size.height * 0.5f);
     
     _mainGear.fillColor = [UIColor darkGrayColor];
     
-    _mainGear.centerRadius = 20.0f;
+    _mainGear.centerRadius = 10.0f;
     
-    _mainGear.centerWitdh = 5.0f;
+    _mainGear.centerWitdh = 2.0f;
     
     [self.view addSubview:_mainGear];
     
-    // 从动齿轮A
+    {
+        // 添加从动齿轮
+        
+        GearView *drivenGear = [GearView gearWithToothCount:38 ToothHeight:7 ToothMaxWidth:10 ToothMinWidth:3];
+        
+        drivenGear.fillColor = [UIColor grayColor];
+        
+        drivenGear.centerRadius = 50.0f;
+        
+        drivenGear.centerWitdh = 30.0f;
+        
+        [self.mainGear addDrivenGear:drivenGear Angle:0 Spacing:2.0f];
+        
+        GearView *drivenGear2 = [GearView gearWithToothCount:58 ToothHeight:7 ToothMaxWidth:10 ToothMinWidth:3];
+        
+        drivenGear2.fillColor = [UIColor grayColor];
+        
+        drivenGear2.centerRadius = 20.0f;
+        
+        drivenGear2.centerWitdh = 2.0f;
+        
+        [drivenGear addDrivenGear:drivenGear2 Angle:0 Spacing:2.0f];
+    }
     
-    _drivenGear_A = [GearView gearWithToothCount:38 ToothHeight:10 ToothMaxWidth:20 ToothMinWidth:10];
+    {
+        // 添加从动齿轮
+        
+        GearView *drivenGear = [GearView gearWithToothCount:88 ToothHeight:7 ToothMaxWidth:10 ToothMinWidth:3];
+        
+        drivenGear.fillColor = [UIColor grayColor];
+        
+        drivenGear.centerRadius = 50.0f;
+        
+        drivenGear.centerWitdh = 30.0f;
+        
+        [self.mainGear addDrivenGear:drivenGear Angle:140 Spacing:2.0f];
+    }
     
-    _drivenGear_A.fillColor = [UIColor lightGrayColor];
+    {
+        // 添加从动齿轮
+        
+        GearView *drivenGear = [GearView gearWithToothCount:18 ToothHeight:7 ToothMaxWidth:10 ToothMinWidth:3];
+        
+        drivenGear.fillColor = [UIColor grayColor];
+        
+        drivenGear.centerRadius = 20.0f;
+        
+        drivenGear.centerWitdh = 2.0f;
+        
+        [self.mainGear addDrivenGear:drivenGear Angle:260 Spacing:2.0f];
+        
+        
+        GearView *drivenGear2 = [GearView gearWithToothCount:30 ToothHeight:7 ToothMaxWidth:10 ToothMinWidth:3];
+        
+        drivenGear2.fillColor = [UIColor grayColor];
+        
+        drivenGear2.centerRadius = 20.0f;
+        
+        drivenGear2.centerWitdh = 10.0f;
+        
+        [drivenGear addDrivenGear:drivenGear2 Angle:240 Spacing:2.0f];
     
-    _drivenGear_A.centerRadius = 50.0f;
+        
+        GearView *drivenGear3 = [GearView gearWithToothCount:18 ToothHeight:7 ToothMaxWidth:10 ToothMinWidth:3];
+        
+        drivenGear3.fillColor = [UIColor grayColor];
+        
+        drivenGear3.centerRadius = 20.0f;
+        
+        drivenGear3.centerWitdh = 2.0f;
+        
+        [drivenGear2 addDrivenGear:drivenGear3 Angle:300 Spacing:2.0f];
+    }
     
-    _drivenGear_A.centerWitdh = 30.0f;
-    
-    [self.view addSubview:_drivenGear_A];
-    
-    // 设置从动齿轮位置
-    
-    [self.mainGear configDrivenGearPointWithDrivenGear:_drivenGear_A Angle:0 Spacing:5.0f];
     
     // 添加单击手势
     
     [self.view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction)]];
     
     
-    // 计数器
+    // 滑块视图
     
-    _timer = [NSTimer timerWithTimeInterval:1.0f target:self selector:@selector(timerAction:)userInfo:nil repeats:YES];
+    _sliderView = [[UISlider alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 30, 280, 20)];
     
-    [[NSRunLoop currentRunLoop]addTimer:_timer forMode:NSRunLoopCommonModes];
-
-    [_timer setFireDate:[NSDate date]];
+    _sliderView.center = CGPointMake(self.view.frame.size.width * 0.5f, self.sliderView.center.y);
     
-//    [self.timer setFireDate:[NSDate distantFuture]];
+    _sliderView.minimumValue = 0;
+    
+    _sliderView.maximumValue = 360;
+    
+    [_sliderView addTarget:self action:@selector(sliderValueChangedAction:) forControlEvents:UIControlEventValueChanged];
+    
+    [self.view addSubview:_sliderView];
+    
+    
+    // 旋转动画
+    
+    [self.mainGear rotationAnimationWithDuration:2.0f];
 }
 
-#pragma mark - 计时器事件
-
-- (void)timerAction:(NSTimer *)timer{
-    
-    [UIView beginAnimations:@"" context:NULL];
-    
-    [UIView setAnimationDuration:1.0f];
-    
-    [UIView setAnimationCurve:UIViewAnimationCurveLinear];
-    
-    CGFloat speed = M_PI_4;
-    
-    self.mainGear.transform = CGAffineTransformRotate(self.mainGear.transform, - speed);
-    
-    // 从动齿轮数 = 主动齿轮数 * 速度 / 从动齿轮数
-    
-    self.drivenGear_A.transform = CGAffineTransformRotate(self.drivenGear_A.transform, ((speed * self.mainGear.toothCount) / self.drivenGear_A.toothCount));
-    
-    [UIView commitAnimations];
-}
 
 - (void)tapAction{
     
-    [self.timer setFireDate:[NSDate distantFuture]];
+}
+
+- (void)sliderValueChangedAction:(UISlider *)slider{
     
-    self.mainGear.transform = CGAffineTransformIdentity;
+    [self.mainGear removeRotationAnimation];
     
-    [self.mainGear configDrivenGearPointWithDrivenGear:_drivenGear_A Angle:arc4random() % 360];
-    
-    [self.timer setFireDate:[NSDate date]];
+    [self.mainGear rotationWithAngle:slider.value];
 }
 
 - (void)didReceiveMemoryWarning {
