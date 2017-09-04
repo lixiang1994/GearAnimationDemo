@@ -144,10 +144,13 @@
     [self.mainGear rotationAnimationWithDuration:2.0f];
 }
 
+#pragma mark - 单击事件
 
 - (void)tapAction{
     
 }
+
+#pragma mark - 滑动值改变事件
 
 - (void)sliderValueChangedAction:(UISlider *)slider{
     

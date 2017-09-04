@@ -91,6 +91,6 @@
 
 @property (nonatomic , strong , readonly ) NSArray *gapRadianArray; //缺口弧度数组
 
-@property (nonatomic , assign ) CGFloat initialRadian; //初始
+@property (nonatomic , assign ) CGFloat initialRadian; //初始弧度
 
 @end
