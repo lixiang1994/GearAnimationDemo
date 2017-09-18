@@ -12,6 +12,8 @@
 
 @property (nonatomic , assign ) CGPathRef gearPath;
 
+@property (nonatomic , assign ) CGFloat currentAngle;
+
 @end
 
 @implementation GearView
@@ -397,6 +399,8 @@
 
 - (void)rotationWithAngle:(CGFloat)angle{
     
+    self.currentAngle = angle;
+    
     CGFloat radian = M_PI / 180 * angle;
     
     [self rotationWithRadian:radian];
@@ -404,7 +408,7 @@
 
 - (void)rotationWithRadian:(CGFloat)radian{
     
-    self.transform = CGAffineTransformMakeRotation(-(radian - self.initialRadian));// CATransform3DMakeRotation(, 0.0f, 0.0f, 1.0f);
+    self.transform = CGAffineTransformMakeRotation(-(radian - self.initialRadian));
     
     // 从动齿轮数 = 主动齿轮数 * 速度 / 从动齿轮数
     
@@ -419,7 +423,7 @@
     
     isRotationAnimation = YES;
     
-    [self rotationAnimationWithDuration:duration Angle:90.0f CurrentAngle:90.0f];
+    [self rotationAnimationWithDuration:duration Angle:90.0f CurrentAngle:self.currentAngle + 90.0f];
 }
 
 - (void)rotationAnimationWithDuration:(CGFloat)duration Angle:(CGFloat)angle CurrentAngle:(CGFloat)currentAngle{
@@ -432,33 +436,40 @@
         
     } completion:^(BOOL finished) {
         
-        if (!finished) return ;
-        
-        CGFloat _currentAngle = currentAngle;
-        
         // 如果可以整除360度 重置当前度数
         
-        if (fmodf(angle , 360.0f) == 0) {
+        if (fmodf(currentAngle , 360.0f) == 0) {
             
-            _currentAngle = 0;
+            self.currentAngle = 0;
             
-            [self rotationWithAngle:_currentAngle];
+            [self rotationWithAngle:self.currentAngle];
         }
         
-        if (isRotationAnimation) [self rotationAnimationWithDuration:duration Angle:angle CurrentAngle:_currentAngle + angle];
+        if (isRotationAnimation) [self rotationAnimationWithDuration:duration Angle:angle CurrentAngle:self.currentAngle + angle];
+        
     }];
     
 }
 
 - (void)removeRotationAnimation{
     
+    [self removeRotationAnimationWithInstant:YES];
+}
+
+- (void)removeRotationAnimationWithInstant:(BOOL)instant{
+    
     isRotationAnimation = NO;
     
-    [self.layer removeAllAnimations];
+    if (instant) {
+        
+        // 移除动画
+        
+        [self.layer removeAllAnimations];
+    }
     
     for (GearView *gear in self.drivenGears) {
         
-        [gear removeRotationAnimation];
+        [gear removeRotationAnimationWithInstant:instant];
     }
 }
 
@@ -477,7 +488,7 @@
     
     [self.superview addSubview:drivenGear];
     
-    [self.superview insertSubview:drivenGear aboveSubview:self];
+    [self.superview insertSubview:drivenGear belowSubview:self];
     
     if (![self.drivenGears containsObject:drivenGear]) [self.drivenGears addObject:drivenGear];
     
@@ -489,6 +500,11 @@
 - (void)removeDrivenGear:(GearView *)drivenGear{
     
     if ([self.drivenGears containsObject:drivenGear]) {
+        
+        for (GearView *gear in drivenGear.drivenGears) {
+            
+            [drivenGear removeDrivenGear:gear];
+        }
         
         [drivenGear removeFromSuperview];
         

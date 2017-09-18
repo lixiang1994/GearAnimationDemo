@@ -59,6 +59,14 @@
  */
 - (void)removeRotationAnimation;
 
+
+/**
+ 移除旋转动画
+
+ @param instant 是否立即移除
+ */
+- (void)removeRotationAnimationWithInstant:(BOOL)instant;
+
 /**
  添加从动齿轮
 
