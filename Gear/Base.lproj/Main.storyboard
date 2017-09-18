@@ -60,31 +60,6 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="MN0-65-2Ni">
                                 <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="textcell" id="nYw-QO-foG">
-                                        <rect key="frame" x="0.0" y="28" width="375" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="nYw-QO-foG" id="XGe-Fc-Lfx">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="旋转动画90%时长 (默认2秒)" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="gOf-iC-e6s">
-                                                    <rect key="frame" x="15" y="15" width="345" height="13.5"/>
-                                                    <nil key="textColor"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <textInputTraits key="textInputTraits"/>
-                                                </textField>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="gOf-iC-e6s" firstAttribute="top" secondItem="XGe-Fc-Lfx" secondAttribute="top" constant="15" id="0JA-Ne-QaT"/>
-                                                <constraint firstItem="gOf-iC-e6s" firstAttribute="centerX" secondItem="XGe-Fc-Lfx" secondAttribute="centerX" id="IZv-cP-HN4"/>
-                                                <constraint firstItem="gOf-iC-e6s" firstAttribute="leading" secondItem="XGe-Fc-Lfx" secondAttribute="leading" constant="15" id="Q29-Kb-Ne0"/>
-                                                <constraint firstAttribute="bottom" secondItem="gOf-iC-e6s" secondAttribute="bottom" constant="15" id="lB7-Vi-J8e"/>
-                                                <constraint firstAttribute="trailing" secondItem="gOf-iC-e6s" secondAttribute="trailing" constant="15" id="tQT-CC-xcz"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </prototypes>
                                 <connections>
                                     <outlet property="dataSource" destination="hTq-eP-rH2" id="FQf-Su-ymB"/>
                                     <outlet property="delegate" destination="hTq-eP-rH2" id="2av-nX-l9z"/>
