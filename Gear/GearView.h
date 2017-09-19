@@ -92,6 +92,27 @@
 - (void)removeDrivenGear:(GearView *)drivenGear;
 
 
+#pragma mark - DEBUG模式
+
+/**
+ debug模式
+ */
+@property (nonatomic , assign ) BOOL debug;
+
+/**
+ 辅助线
+ */
+@property (nonatomic , assign ) BOOL debugAuxiliaryLines;
+
+/**
+ 轮齿辅助线
+ */
+@property (nonatomic , assign ) BOOL debugToothAuxiliaryLines;
+
+/**
+ 缺口辅助线
+ */
+@property (nonatomic , assign ) BOOL debugGapAuxiliaryLines;
 
 #pragma mark - 内部使用
 

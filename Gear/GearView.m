@@ -116,9 +116,37 @@
     [self setNeedsDisplay];
 }
 
+- (void)setDebug:(BOOL)debug{
+    
+    _debug = debug;
+    
+    [self setNeedsDisplay];
+}
+
+- (void)setDebugAuxiliaryLines:(BOOL)debugAuxiliaryLines{
+    
+    _debugAuxiliaryLines = debugAuxiliaryLines;
+    
+    [self setNeedsDisplay];
+}
+
+- (void)setDebugToothAuxiliaryLines:(BOOL)debugToothAuxiliaryLines{
+    
+    _debugToothAuxiliaryLines = debugToothAuxiliaryLines;
+    
+    [self setNeedsDisplay];
+}
+
+- (void)setDebugGapAuxiliaryLines:(BOOL)debugGapAuxiliaryLines{
+    
+    _debugGapAuxiliaryLines = debugGapAuxiliaryLines;
+    
+    [self setNeedsDisplay];
+}
+
 #pragma mark - 原理拆分演示
 
-- (void)test:(CGRect)rect{
+- (void)debug:(CGRect)rect{
     
     /**
      
@@ -162,7 +190,7 @@
     
     NSMutableArray *exteriorPointArray = [NSMutableArray array]; //外圆坐标点数组
     
-    NSMutableArray *interiorPointArray = [NSMutableArray array]; //内院坐标点数组
+    NSMutableArray *interiorPointArray = [NSMutableArray array]; //内圆坐标点数组
     
     CGContextRef context = UIGraphicsGetCurrentContext();
     
@@ -263,136 +291,125 @@
     }
     
     
-    // 辅助线
+    // 垂直水平辅助线
+    {
+        if (self.debugAuxiliaryLines) {
+            
+            CGContextSetLineWidth(context, 1.0f / [[UIScreen mainScreen] scale]);
+            
+            CGContextSetStrokeColorWithColor(context, [UIColor lightGrayColor].CGColor);
+            
+            CGFloat list[] = {2.0f, 2.0f};
+            
+            CGContextSetLineDash(context, 0, list, 2);
+            
+            CGContextMoveToPoint(context, width * 0.5f, 0.0);
+            
+            CGContextAddLineToPoint(context, width * 0.5f , height);
+            
+            CGContextStrokePath(context);
+            
+            CGContextMoveToPoint(context, 0.0f, height * 0.5f);
+            
+            CGContextAddLineToPoint(context, width, height * 0.5f);
+            
+            CGContextStrokePath(context);
+        }
+    }
     
-    CGContextSetLineWidth(context, 1.0f / [[UIScreen mainScreen] scale]);
     
-    CGContextSetStrokeColorWithColor(context, [UIColor lightGrayColor].CGColor);
+    // 轮齿缺口辅助线
+    {
+        CGContextSetStrokeColorWithColor(context, [UIColor redColor].CGColor);
+        
+        CGContextSetLineWidth(context, 1.0f / [[UIScreen mainScreen] scale]);
+        
+        CGFloat list[] = {2.0f, 2.0f};
+        
+        CGContextSetLineDash(context, 0, list, 2);
+        
+        if (self.debugToothAuxiliaryLines) {
+            
+            for (NSNumber *radian in self.toothRadianArray) {
+                
+                CGPoint point = [self getPointWithRadius:exteriorRadius Radian:[radian floatValue]];
+                
+                CGContextMoveToPoint(context, width * 0.5f, height * 0.5f);
+                
+                CGContextAddLineToPoint(context, point.x , point.y);
+                
+                CGContextStrokePath(context);
+            }
+            
+            CGContextSetStrokeColorWithColor(context, [UIColor blueColor].CGColor);
+        }
+        
+        if (self.debugGapAuxiliaryLines) {
+            
+            for (NSNumber *radian in self.gapRadianArray) {
+                
+                CGPoint point = [self getPointWithRadius:interiorRadius Radian:[radian floatValue]];
+                
+                CGContextMoveToPoint(context, width * 0.5f, height * 0.5f);
+                
+                CGContextAddLineToPoint(context, point.x + self.toothHeight , point.y + self.toothHeight);
+                
+                CGContextStrokePath(context);
+            }
+        }
+    }
     
-    CGFloat list[] = {2.0f, 2.0f};
-    
-    CGContextSetLineDash(context, 0, list, 2);
-    
-    CGContextMoveToPoint(context, width * 0.5f, 0.0);
-    
-    CGContextAddLineToPoint(context, width * 0.5f , height);
-    
-    CGContextStrokePath(context);
-    
-    CGContextMoveToPoint(context, 0.0f, height * 0.5f);
-    
-    CGContextAddLineToPoint(context, width, height * 0.5f);
-    
-    CGContextStrokePath(context);
 }
 
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.
 - (void)drawRect:(CGRect)rect {
     
-//    [self test:rect];
+    if (self.debug) {
+        
+        [self debug:rect];
     
-    CGFloat width = rect.size.width;
-    
-    CGFloat height = rect.size.height;
-    
-    
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    
-    CGContextBeginPath(context);
-    
-    CGContextSetLineWidth(context, 1.0f);
-    
-    CGContextSetStrokeColorWithColor(context, [UIColor blackColor].CGColor); //
-    
-    CGContextSetFillColorWithColor(context, self.fillColor.CGColor);
-    
-    // 齿轮
-    
-    CGContextAddPath(context, self.gearPath);
-    
-    CGContextClosePath(context);
-    
-    CGContextFillPath(context);
-    
-    CGContextStrokePath(context);
-    
-    
-    // 圆心
-    
-    CGContextSetStrokeColorWithColor(context, [UIColor whiteColor].CGColor);
-    
-    CGContextSetLineWidth(context, self.centerWitdh);
-    
-    CGContextAddArc(context, width * 0.5f, height * 0.5f, self.centerRadius, 0.0f, M_PI * 2, 0);
-    
-    CGContextStrokePath(context);
-    
-    /**
-    
-    CGFloat exteriorRadius = width * 0.5f; //外圆半径
-    
-    CGFloat interiorRadius = (width - self.toothHeight * 2) * 0.5f; //内圆半径
-    
-    // 轮齿缺口辅助线
-    {
-        CGContextSetStrokeColorWithColor(context, [UIColor redColor].CGColor);
+    } else {
+        
+        CGFloat width = rect.size.width;
+        
+        CGFloat height = rect.size.height;
+        
+        
+        CGContextRef context = UIGraphicsGetCurrentContext();
+        
+        CGContextBeginPath(context);
         
         CGContextSetLineWidth(context, 1.0f);
         
-        CGFloat list[] = {2.0f, 2.0f};
+        CGContextSetFillColorWithColor(context, self.fillColor.CGColor);
         
-        CGContextSetLineDash(context, 0, list, 2);
+        // 齿轮
         
-        for (NSNumber *radian in self.toothRadianArray) {
-            
-            CGPoint point = [self getPointWithRadius:exteriorRadius Radian:[radian floatValue]];
-            
-            CGContextMoveToPoint(context, width * 0.5f, height * 0.5f);
-            
-            CGContextAddLineToPoint(context, point.x , point.y);
-            
-            CGContextStrokePath(context);
-        }
+        CGContextAddPath(context, self.gearPath);
         
-        CGContextSetStrokeColorWithColor(context, [UIColor blueColor].CGColor);
+        CGContextClosePath(context);
         
-        for (NSNumber *radian in self.gapRadianArray) {
-            
-            CGPoint point = [self getPointWithRadius:interiorRadius Radian:[radian floatValue]];
-            
-            CGContextMoveToPoint(context, width * 0.5f, height * 0.5f);
-            
-            CGContextAddLineToPoint(context, point.x + self.toothHeight , point.y + self.toothHeight);
-            
-            CGContextStrokePath(context);
-        }
-    }
-    
-    // 水平垂直辅助线
-    {
-        CGContextSetLineWidth(context, 1.0f / [[UIScreen mainScreen] scale]);
-        
-        CGContextSetStrokeColorWithColor(context, [UIColor greenColor].CGColor);
-        
-        CGFloat list[] = {2.0f, 2.0f};
-        
-        CGContextSetLineDash(context, 0, list, 2);
-        
-        CGContextMoveToPoint(context, width * 0.5f, 0.0);
-        
-        CGContextAddLineToPoint(context, width * 0.5f , height);
+        CGContextFillPath(context);
         
         CGContextStrokePath(context);
         
-        CGContextMoveToPoint(context, 0.0f, height * 0.5f);
+        // 圆心
         
-        CGContextAddLineToPoint(context, width, height * 0.5f);
-        
-        CGContextStrokePath(context);
+        if (self.centerRadius > 0.0f) {
+            
+            CGContextSetBlendMode(context, kCGBlendModeClear);
+            
+            CGContextSetLineWidth(context, self.centerWitdh);
+            
+            CGContextAddArc(context, width * 0.5f, height * 0.5f, self.centerRadius, 0.0f, M_PI * 2, 0);
+            
+            if (self.centerWitdh > 0.0f) CGContextStrokePath(context); else CGContextFillPath(context);
+            
+            CGContextSetBlendMode(context, kCGBlendModeNormal);
+        }
     }
     
-    */
 }
 
 #pragma mark - 旋转
@@ -428,13 +445,15 @@
 
 - (void)rotationAnimationWithDuration:(CGFloat)duration Angle:(CGFloat)angle CurrentAngle:(CGFloat)currentAngle{
     
-    [UIView animateWithDuration:duration animations:^{
+    [UIView animateWithDuration:duration delay:0 options:UIViewAnimationCurveLinear | UIViewAnimationOptionAllowUserInteraction animations:^{
         
         [UIView setAnimationCurve:UIViewAnimationCurveLinear];
         
         [self rotationWithAngle:currentAngle];
         
     } completion:^(BOOL finished) {
+       
+        if (!finished) return ;
         
         // 如果可以整除360度 重置当前度数
         
@@ -446,7 +465,6 @@
         }
         
         if (isRotationAnimation) [self rotationAnimationWithDuration:duration Angle:angle CurrentAngle:self.currentAngle + angle];
-        
     }];
     
 }
@@ -460,12 +478,9 @@
     
     isRotationAnimation = NO;
     
-    if (instant) {
-        
-        // 移除动画
-        
-        [self.layer removeAllAnimations];
-    }
+    // 移除动画
+    
+    if (instant) [self.layer removeAllAnimations];
     
     for (GearView *gear in self.drivenGears) {
         

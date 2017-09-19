@@ -10,6 +10,8 @@
 
 #import "LEEAlert.h"
 
+#import "HUD.h"
+
 #import "GearView.h"
 
 #define VIEWSAFEAREAINSETS(view) ({UIEdgeInsets i; if(@available(iOS 11.0, *)) {i = view.safeAreaInsets;} else {i = UIEdgeInsetsZero;} i;})
@@ -20,18 +22,33 @@
 
 @property (nonatomic , strong ) GearView *mainGear; //主齿轮
 
-@property (nonatomic , strong ) NSMutableArray *drivenGearArray; //从动齿轮数组
-
 @property (nonatomic , strong ) UISlider *sliderView; //滑块视图
-
-
 
 @property (nonatomic , weak ) GearView *selectedGear; //选中齿轮
 
+@property (nonatomic , assign ) BOOL isAnimation; //是否在动画
 
-@property (nonatomic , assign ) BOOL isAnimation;
+@property (nonatomic , assign ) CGFloat animationDuration; //动画时长
 
-@property (nonatomic , assign ) CGFloat animationDuration;
+/**
+ debug模式
+ */
+@property (nonatomic , assign ) BOOL debug;
+
+/**
+ 辅助线
+ */
+@property (nonatomic , assign ) BOOL debugAuxiliaryLines;
+
+/**
+ 轮齿辅助线
+ */
+@property (nonatomic , assign ) BOOL debugToothAuxiliaryLines;
+
+/**
+ 缺口辅助线
+ */
+@property (nonatomic , assign ) BOOL debugGapAuxiliaryLines;
 
 @end
 
@@ -44,10 +61,6 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    // 添加设置完成通知
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(finishSetNotify:) name:@"finishSet" object:self];
-    
     // 默认动画时长
     
     _animationDuration = 2.0f;
@@ -58,7 +71,7 @@
 }
 
 - (void)initSubView{
-    
+
     // 主动齿轮
     
     _mainGear = [GearView gearWithToothCount:10 ToothHeight:7 ToothMaxWidth:10 ToothMinWidth:3];
@@ -74,86 +87,12 @@
     [self.view addSubview:_mainGear];
     
     [_mainGear addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(gearTapAction:)]];
-    /*
-    {
-        // 添加从动齿轮
-        
-        GearView *drivenGear = [GearView gearWithToothCount:38 ToothHeight:7 ToothMaxWidth:10 ToothMinWidth:3];
-        
-        drivenGear.fillColor = [UIColor grayColor];
-        
-        drivenGear.centerRadius = 50.0f;
-        
-        drivenGear.centerWitdh = 30.0f;
-        
-        [self.mainGear addDrivenGear:drivenGear Angle:0 Spacing:2.0f];
-        
-        GearView *drivenGear2 = [GearView gearWithToothCount:58 ToothHeight:7 ToothMaxWidth:10 ToothMinWidth:3];
-        
-        drivenGear2.fillColor = [UIColor grayColor];
-        
-        drivenGear2.centerRadius = 20.0f;
-        
-        drivenGear2.centerWitdh = 2.0f;
-        
-        [drivenGear addDrivenGear:drivenGear2 Angle:0 Spacing:2.0f];
-    }
     
-    {
-        // 添加从动齿轮
-        
-        GearView *drivenGear = [GearView gearWithToothCount:88 ToothHeight:7 ToothMaxWidth:10 ToothMinWidth:3];
-        
-        drivenGear.fillColor = [UIColor grayColor];
-        
-        drivenGear.centerRadius = 50.0f;
-        
-        drivenGear.centerWitdh = 30.0f;
-        
-        [self.mainGear addDrivenGear:drivenGear Angle:140 Spacing:2.0f];
-    }
-    
-    {
-        // 添加从动齿轮
-        
-        GearView *drivenGear = [GearView gearWithToothCount:18 ToothHeight:7 ToothMaxWidth:10 ToothMinWidth:3];
-        
-        drivenGear.fillColor = [UIColor grayColor];
-        
-        drivenGear.centerRadius = 20.0f;
-        
-        drivenGear.centerWitdh = 2.0f;
-        
-        [self.mainGear addDrivenGear:drivenGear Angle:260 Spacing:2.0f];
-        
-        
-        GearView *drivenGear2 = [GearView gearWithToothCount:30 ToothHeight:7 ToothMaxWidth:10 ToothMinWidth:3];
-        
-        drivenGear2.fillColor = [UIColor grayColor];
-        
-        drivenGear2.centerRadius = 20.0f;
-        
-        drivenGear2.centerWitdh = 10.0f;
-        
-        [drivenGear addDrivenGear:drivenGear2 Angle:240 Spacing:2.0f];
-        
-        
-        GearView *drivenGear3 = [GearView gearWithToothCount:18 ToothHeight:7 ToothMaxWidth:10 ToothMinWidth:3];
-        
-        drivenGear3.fillColor = [UIColor grayColor];
-        
-        drivenGear3.centerRadius = 20.0f;
-        
-        drivenGear3.centerWitdh = 2.0f;
-        
-        [drivenGear2 addDrivenGear:drivenGear3 Angle:300 Spacing:2.0f];
-    }
-    */
     // 滑块视图
     
-    _sliderView = [[UISlider alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 30 - VIEWSAFEAREAINSETS(self.view).top - VIEWSAFEAREAINSETS(self.view).bottom , 280, 20)];
+    _sliderView = [[UISlider alloc] initWithFrame:CGRectMake(0, 0 , 280, 20)];
     
-    _sliderView.center = CGPointMake(self.view.frame.size.width * 0.5f, self.sliderView.center.y);
+    _sliderView.center = CGPointMake(self.view.frame.size.width * 0.5f, self.view.frame.size.height - 30);
     
     _sliderView.minimumValue = 0;
     
@@ -162,6 +101,13 @@
     [_sliderView addTarget:self action:@selector(sliderValueChangedAction:) forControlEvents:UIControlEventValueChanged];
     
     [self.view addSubview:_sliderView];
+}
+
+- (void)viewSafeAreaInsetsDidChange{
+    
+    [super viewSafeAreaInsetsDidChange];
+    
+    self.sliderView.center = CGPointMake(self.view.frame.size.width * 0.5f, self.view.frame.size.height - 30 - VIEWSAFEAREAINSETS(self.view).bottom);
 }
 
 #pragma mark - 导航栏动画按钮点击事件
@@ -197,10 +143,6 @@
     
     if (self.selectedGear) {
         
-        // 移除旋转动画
-        
-        if (self.isAnimation) [self.mainGear removeRotationAnimation];
-        
         // 获取齿轮相关设置
         
         __weak typeof(self) weakSelf = self;
@@ -235,6 +177,7 @@
             
             spacingTF = textField;
         })
+        .LeeCancelAction(@"取消" , nil)
         .LeeAction(@"添加" , ^{
             
             if (!weakSelf) return ;
@@ -253,29 +196,29 @@
             
             drivenGear.fillColor = [UIColor colorWithRed:arc4random() % 255 / 255.0f green:arc4random() % 255 / 255.0f blue:arc4random() % 255 / 255.0f alpha:(arc4random() % 6 + 5) / 10.0f];
             
-            drivenGear.centerRadius = 1.0f * 18.0f;
+            drivenGear.centerRadius = 1.0f * toothCount;
             
-            drivenGear.centerWitdh = 0.1f * 18.0f;
+            drivenGear.centerWitdh = 0.1f * toothCount;
             
             [weakSelf.selectedGear addDrivenGear:drivenGear Angle:angle Spacing:spacing];
             
             [drivenGear addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:weakSelf action:@selector(gearTapAction:)]];
             
+            [weakSelf configGearDebug:drivenGear];
+            
             // 移除选中齿轮状态
             
-            weakSelf.selectedGear.backgroundColor = [UIColor clearColor];
+            weakSelf.selectedGear.layer.borderWidth = 0.0f;
+            
+            weakSelf.selectedGear.layer.borderColor = [UIColor clearColor].CGColor;
             
             weakSelf.selectedGear = nil;
         })
-        .LeeCancelAction(@"取消" , nil)
         .LeeShow();
     
     } else {
         
-        [LEEAlert alert].config
-        .LeeContent(@"请选中一个齿轮")
-        .LeeClickBackgroundClose(YES)
-        .LeeShow();
+        [HUD showMessage:@"请选中一个齿轮"];
     }
 }
 
@@ -283,6 +226,121 @@
 
 - (IBAction)settingBarButtonAction:(id)sender {
     
+    __weak typeof(self) weakSelf = self;
+    
+    __block UITextField *animationDurationTF;
+    
+    [LEEAlert alert].config
+    .LeeTitle(@"设置")
+    .LeeAddTextField(^(UITextField *textField) {
+        
+        textField.placeholder = @"旋转90度动画时长 (默认2秒)";
+        
+        textField.keyboardType = UIKeyboardTypeNumberPad;
+        
+        animationDurationTF = textField;
+    })
+    .LeeAddAction(^(LEEAction *action) {
+        
+        action.title = @"Debug";
+        
+        action.titleColor = [UIColor redColor];
+        
+        action.clickBlock = ^{
+            
+            if (!weakSelf) return ;
+            
+            UISwitch *debugSwitch = [[UISwitch alloc] init];
+            
+            debugSwitch.on = weakSelf.debug;
+            
+            UISwitch *debugAuxiliaryLinesSwitch = [[UISwitch alloc] init];
+            
+            debugAuxiliaryLinesSwitch.on = weakSelf.debugAuxiliaryLines;
+            
+            UISwitch *debugToothAuxiliaryLinesSwitch = [[UISwitch alloc] init];
+            
+            debugToothAuxiliaryLinesSwitch.on = weakSelf.debugToothAuxiliaryLines;
+            
+            UISwitch *debugGapAuxiliaryLinesSwitch = [[UISwitch alloc] init];
+            
+            debugGapAuxiliaryLinesSwitch.on = weakSelf.debugGapAuxiliaryLines;
+            
+            [LEEAlert alert].config
+            .LeeContent(@"Debug")
+            .LeeCustomView(debugSwitch)
+            .LeeContent(@"--------------------------")
+            .LeeContent(@"水平垂直辅助线")
+            .LeeCustomView(debugAuxiliaryLinesSwitch)
+            .LeeContent(@"轮齿辅助线")
+            .LeeCustomView(debugToothAuxiliaryLinesSwitch)
+            .LeeContent(@"齿槽辅助线")
+            .LeeCustomView(debugGapAuxiliaryLinesSwitch)
+            .LeeCancelAction(@"取消" , nil)
+            .LeeAction(@"确认", ^{
+                
+                if (!weakSelf) return ;
+                
+                if (debugAuxiliaryLinesSwitch.on ||
+                    debugToothAuxiliaryLinesSwitch.on ||
+                    debugGapAuxiliaryLinesSwitch.on) {
+                    
+                    debugSwitch.on = YES;
+                }
+                
+                weakSelf.debug = debugSwitch.on;
+                
+                weakSelf.debugAuxiliaryLines = debugAuxiliaryLinesSwitch.on;
+                
+                weakSelf.debugToothAuxiliaryLines = debugToothAuxiliaryLinesSwitch.on;
+                
+                weakSelf.debugGapAuxiliaryLines = debugGapAuxiliaryLinesSwitch.on;
+                
+                [weakSelf configGearDebug:weakSelf.mainGear];
+            })
+            .LeeShow();
+        };
+    })
+    .LeeAction(@"确认" , ^{
+        
+        if (!weakSelf) return ;
+        
+        CGFloat animationDuration = animationDurationTF.text.length ? [animationDurationTF.text floatValue] : 2.0f;
+        
+        weakSelf.animationDuration = animationDuration;
+        
+        if (weakSelf.isAnimation) {
+            
+            // 移除旋转动画
+            
+            [weakSelf.mainGear removeRotationAnimation];
+            
+            // 重新添加旋转动画
+            
+            [weakSelf.mainGear rotationAnimationWithDuration:weakSelf.animationDuration];
+        }
+        
+    })
+    .LeeCancelAction(@"取消" , nil)
+    .LeeShow();
+}
+
+#pragma mark - 设置齿轮 debug
+
+- (void)configGearDebug:(GearView *)gearView{
+    
+    gearView.debug = self.debug;
+    
+    gearView.debugAuxiliaryLines = self.debugAuxiliaryLines;
+    
+    gearView.debugToothAuxiliaryLines = self.debugToothAuxiliaryLines;
+    
+    gearView.debugGapAuxiliaryLines = self.debugGapAuxiliaryLines;
+    
+    for (GearView *item in gearView.drivenGears) {
+        
+        [self configGearDebug:item];
+    }
     
 }
 
@@ -294,7 +352,9 @@
     
     if (self.selectedGear == selectedGear) {
         
-        self.selectedGear.backgroundColor = [UIColor clearColor];
+        self.selectedGear.layer.borderWidth = 0.0f;
+        
+        self.selectedGear.layer.borderColor = [UIColor clearColor].CGColor;
         
         self.selectedGear = nil;
     
@@ -302,14 +362,18 @@
         
         if (self.selectedGear) {
             
-            self.selectedGear.backgroundColor = [UIColor clearColor];
+            self.selectedGear.layer.borderWidth = 0.0f;
+            
+            self.selectedGear.layer.borderColor = [UIColor clearColor].CGColor;
             
             self.selectedGear = nil;
         }
         
         self.selectedGear = selectedGear;
         
-        self.selectedGear.backgroundColor = [UIColor redColor];
+        self.selectedGear.layer.borderWidth = 1/[[UIScreen mainScreen] scale];
+        
+        self.selectedGear.layer.borderColor = [UIColor redColor].CGColor;
     }
     
 }
@@ -318,34 +382,16 @@
 
 - (void)sliderValueChangedAction:(UISlider *)slider{
     
-    [self.mainGear removeRotationAnimation];
+    if (self.isAnimation) [self animationBarButtonAction:self.animationBarButton];
+    
+    [self.sliderView showMessage:[NSString stringWithFormat:@"当前 %.f度" , slider.value]];
     
     [self.mainGear rotationWithAngle:slider.value];
-}
-
-- (void)finishSetNotify:(NSNotification *)notify{
-    
-    NSDictionary *info = notify.userInfo;
-    
-    self.animationDuration = [info[@"animationDuration"] floatValue];
-    
-    if (self.isAnimation) {
-        
-        // 移除旋转动画
-        
-        [self.mainGear removeRotationAnimation];
-        
-        // 重新添加旋转动画
-        
-        [self.mainGear rotationAnimationWithDuration:self.animationDuration];
-    }
-    
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
 
 @end

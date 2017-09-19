@@ -4,7 +4,7 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment version="4352" identifier="iOS"/>
+        <deployment version="2304" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
         <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -31,7 +31,6 @@
                             <barButtonItem title="设置" id="5fv-w3-KLq">
                                 <connections>
                                     <action selector="settingBarButtonAction:" destination="BYZ-38-t0r" id="ltP-ag-RrO"/>
-                                    <segue destination="hTq-eP-rH2" kind="push" id="Og4-GR-AOI"/>
                                 </connections>
                             </barButtonItem>
                             <barButtonItem title="添加" id="CUI-0W-ysS">
@@ -48,48 +47,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="479.19999999999999" y="130.88455772113943"/>
-        </scene>
-        <!--设置-->
-        <scene sceneID="9Iu-iA-phU">
-            <objects>
-                <viewController id="hTq-eP-rH2" customClass="SettingViewController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="bsh-d9-ve6">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="MN0-65-2Ni">
-                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <connections>
-                                    <outlet property="dataSource" destination="hTq-eP-rH2" id="FQf-Su-ymB"/>
-                                    <outlet property="delegate" destination="hTq-eP-rH2" id="2av-nX-l9z"/>
-                                </connections>
-                            </tableView>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstItem="jjr-Ee-a33" firstAttribute="bottom" secondItem="MN0-65-2Ni" secondAttribute="bottom" id="4hB-mD-w9K"/>
-                            <constraint firstItem="MN0-65-2Ni" firstAttribute="top" secondItem="jjr-Ee-a33" secondAttribute="top" id="TWr-GC-m24"/>
-                            <constraint firstItem="MN0-65-2Ni" firstAttribute="leading" secondItem="jjr-Ee-a33" secondAttribute="leading" id="gcR-f8-CfL"/>
-                            <constraint firstItem="jjr-Ee-a33" firstAttribute="trailing" secondItem="MN0-65-2Ni" secondAttribute="trailing" id="roj-Sh-RjE"/>
-                        </constraints>
-                        <viewLayoutGuide key="safeArea" id="jjr-Ee-a33"/>
-                    </view>
-                    <navigationItem key="navigationItem" title="设置" id="4iV-hb-fH8">
-                        <barButtonItem key="backBarButtonItem" title="返回" id="NuN-a4-Kfb"/>
-                        <barButtonItem key="rightBarButtonItem" title="确认" id="Mw4-it-zjQ">
-                            <connections>
-                                <action selector="barButtonAction:" destination="hTq-eP-rH2" id="DYX-Sp-9tD"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
-                    <connections>
-                        <outlet property="tableView" destination="MN0-65-2Ni" id="O6X-cU-qXh"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="LRT-uV-cI3" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1285.5999999999999" y="130.88455772113943"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Xgs-IP-V4N">
