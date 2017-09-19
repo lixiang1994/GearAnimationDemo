@@ -122,4 +122,8 @@
 
 @property (nonatomic , assign ) CGFloat initialRadian; //初始弧度
 
+@property (nonatomic , assign ) CGFloat mainAngle; //相对于主齿轮的角度
+
+@property (nonatomic , assign ) CGFloat mainSpacing; //相对于主齿轮的距离
+
 @end

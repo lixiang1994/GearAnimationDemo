@@ -84,7 +84,7 @@
         
         _centerRadius = 0.0f;
         
-        _centerWitdh = 1.0f;
+        _centerWitdh = 0.0f;
         
         [self gearPath];
         
@@ -142,6 +142,18 @@
     _debugGapAuxiliaryLines = debugGapAuxiliaryLines;
     
     [self setNeedsDisplay];
+}
+
+- (void)setCenter:(CGPoint)center{
+    
+    [super setCenter:center];
+    
+    // 主齿轮center发生变化时, 重新设置从动齿轮位置
+    
+    for (GearView *gearView in self.drivenGears) {
+        
+        [self configDrivenGearPointWithDrivenGear:gearView Angle:gearView.mainAngle Spacing:gearView.mainSpacing];
+    }
 }
 
 #pragma mark - 原理拆分演示
@@ -505,9 +517,19 @@
     
     [self.superview insertSubview:drivenGear belowSubview:self];
     
+    drivenGear.mainAngle = angle;
+    
+    drivenGear.mainSpacing = spacing;
+    
     if (![self.drivenGears containsObject:drivenGear]) [self.drivenGears addObject:drivenGear];
     
+    // 设置从动齿轮位置
+    
     [self configDrivenGearPointWithDrivenGear:drivenGear Angle:angle Spacing:spacing];
+    
+    // 设置从动齿轮初始弧度
+    
+    [self configDrivenGearInitialRadianWithDrivenGear:drivenGear Angle:angle Spacing:spacing];
 }
 
 #pragma mark - 移除从动齿轮
@@ -526,6 +548,8 @@
         [self.drivenGears removeObject:drivenGear];
     }
 }
+
+#pragma mark - 设置从动齿轮位置
 
 - (void)configDrivenGearPointWithDrivenGear:(GearView *)drivenGear Angle:(CGFloat)angle Spacing:(CGFloat)spacing{
     
@@ -554,7 +578,27 @@
     CGPoint drivenPoint = CGPointMake(point.x + self.center.x - drivenRadius - mainRadius + minToothHeight, point.y + self.center.y - drivenRadius - mainRadius + minToothHeight);
     
     drivenGear.center = drivenPoint;
+}
+
+#pragma mark - 设置从动齿轮初始弧度
+
+- (void)configDrivenGearInitialRadianWithDrivenGear:(GearView *)drivenGear Angle:(CGFloat)angle Spacing:(CGFloat)spacing{
     
+    if (!drivenGear) return;
+    
+    if (angle < 0 || angle > 359) angle = 0;
+    
+    CGFloat radian = M_PI / 180 * angle;
+    
+    CGFloat mainRadius = self.bounds.size.width * 0.5f; //主动齿轮半径
+    
+    CGFloat drivenRadius = drivenGear.bounds.size.width * 0.5f; //从动齿轮半径
+    
+    CGFloat minToothHeight = MIN(self.toothHeight, drivenGear.toothHeight); //最小的轮齿高度
+    
+    if (minToothHeight < spacing) spacing = 1.0f;
+    
+    minToothHeight = minToothHeight - spacing; //去除间隙
     
     // 计算从动齿轮初始弧度 以保证轮齿咬合
     
@@ -582,7 +626,7 @@
     
     // 根据主动齿轮最近的坐标 计算相对于从动齿轮最接近的坐标点的弧度以及偏差
     
-    CGFloat drivenNearestRadian = [self getRadianWithCenter:drivenPoint Point:mainNearestPoint] + M_PI;
+    CGFloat drivenNearestRadian = [self getRadianWithCenter:drivenGear.center Point:mainNearestPoint] + M_PI;
     
     CGFloat drivenNearestOffsetRadian = drivenNearestRadian - [[self getNearestNumberWithArray:isTooth ? drivenGear.gapRadianArray : drivenGear.toothRadianArray Number:@(drivenNearestRadian)] floatValue]; //从动齿轮偏移弧度 = 主动齿轮最接近点的坐标较从动齿轮的弧度 - 从动齿轮的轮齿或缺口最接近的弧度
     
@@ -590,32 +634,15 @@
     
     drivenGear.initialRadian = drivenNearestOffsetRadian;
     
-    /** 计算从动齿轮最接近的坐标 (调试使用)
+    /** 计算从动齿轮最接近的坐标 (调试使用) */
     
     CGPoint drivenNearestPoint = [self getPointWithRadius:isTooth ? drivenRadius - drivenGear.toothHeight : drivenRadius Radian:drivenNearestRadian];
     
-    drivenNearestPoint = CGPointMake(drivenNearestPoint.x + drivenPoint.x - drivenRadius, drivenNearestPoint.y + drivenPoint.y  - drivenRadius);
+    drivenNearestPoint = CGPointMake(drivenNearestPoint.x + drivenGear.center.x - drivenRadius, drivenNearestPoint.y + drivenGear.center.y  - drivenRadius);
     
     if (isTooth) drivenNearestPoint.x += drivenGear.toothHeight;
     
     if (isTooth) drivenNearestPoint.y += drivenGear.toothHeight;
-    
-    {
-        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(mainNearestPoint.x, mainNearestPoint.y, 2, 2)];
-        
-        view.backgroundColor = [UIColor greenColor];
-        
-        [self.superview addSubview:view];
-    }
-    
-    {
-        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(drivenNearestPoint.x, drivenNearestPoint.y, 2, 2)];
-        
-        view.backgroundColor = [UIColor orangeColor];
-        
-        [self.superview addSubview:view];
-    }
-    */
 }
 
 #pragma mark - 获取数组中最接近的值
@@ -688,22 +715,22 @@
     switch (index) {
             
         case 0:
-            NSLog(@"第二象限");
+            //NSLog(@"第二象限");
             x = radius + cosf(needRadian)*radius;
             y = radius + sinf(needRadian)*radius;
             break;
         case 1:
-            NSLog(@"第三象限");
+            //NSLog(@"第三象限");
             x = radius - sinf(needRadian)*radius;
             y = radius + cosf(needRadian)*radius;
             break;
         case 2:
-            NSLog(@"第四象限");
+            //NSLog(@"第四象限");
             x = radius - cosf(needRadian)*radius;
             y = radius - sinf(needRadian)*radius;
             break;
         case 3:
-            NSLog(@"第一象限");
+            //NSLog(@"第一象限");
             x = radius + sinf(needRadian)*radius;
             y = radius - cosf(needRadian)*radius;
             break;
