@@ -198,7 +198,7 @@
             
             drivenGear.centerRadius = 1.0f * toothCount;
             
-            drivenGear.centerWitdh = 0.1f * toothCount;
+            drivenGear.centerWitdh = 0.2f * toothCount;
             
             [weakSelf.selectedGear addDrivenGear:drivenGear Angle:angle Spacing:spacing];
             
