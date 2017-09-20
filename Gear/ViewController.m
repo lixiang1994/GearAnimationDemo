@@ -57,6 +57,15 @@
     CGFloat drivenGear_A_Angle;
 }
 
+- (void)viewDidDisappear:(BOOL)animated{
+    
+    [super viewDidDisappear:animated];
+    
+    // 停止动画
+    
+    if (self.isAnimation) [self animationBarButtonAction:self.animationBarButton];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
@@ -92,7 +101,7 @@
     
     _sliderView = [[UISlider alloc] initWithFrame:CGRectMake(0, 0 , 280, 20)];
     
-    _sliderView.center = CGPointMake(self.view.frame.size.width * 0.5f, self.view.frame.size.height - 30);
+    _sliderView.center = CGPointMake(self.view.frame.size.width * 0.5f, self.view.frame.size.height - 49.0f - 30);
     
     _sliderView.minimumValue = 0;
     
