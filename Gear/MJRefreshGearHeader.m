@@ -27,6 +27,8 @@
 
 @property (nonatomic , assign ) BOOL isEnd;
 
+@property (nonatomic , assign ) CGFloat lastPullingPercent; //上一次拖出比例
+
 @end
 
 @implementation MJRefreshGearHeader
@@ -39,7 +41,7 @@
     
     // 设置控件的高度
     
-    self.mj_h = ADAPTER(80.0f);
+    self.mj_h = ADAPTER(75.0f);
     
     _view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, 0)];
     
@@ -57,34 +59,36 @@
     
     _mainGear.centerRadius = ADAPTER(7.0f);
     
+    _mainGear.clockwise = NO;
+    
     [self.view addSubview:_mainGear];
     
     // 从动齿轮
     
-    GearView *drivenGear_A = [GearView gearWithToothCount:23 ToothHeight:ADAPTER(8) ToothMaxWidth:ADAPTER(8) ToothMinWidth:ADAPTER(4)];
+    GearView *drivenGear_A = [GearView gearWithToothCount:21 ToothHeight:ADAPTER(10) ToothMaxWidth:ADAPTER(8) ToothMinWidth:ADAPTER(4)];
     
     drivenGear_A.fillColor = [UIColor colorWithRed:213/255.0f green:85/255.0f blue:80/255.0f alpha:1.0f];
     
-    [self.mainGear addDrivenGear:drivenGear_A Angle:315.0f Spacing:2.0f];
+    [self.mainGear addDrivenGear:drivenGear_A Angle:315.0f Spacing:ADAPTER(2.0f)];
     
-    GearView *drivenGear_B = [GearView gearWithToothCount:23 ToothHeight:ADAPTER(8) ToothMaxWidth:ADAPTER(8) ToothMinWidth:ADAPTER(4)];
+    GearView *drivenGear_B = [GearView gearWithToothCount:21 ToothHeight:ADAPTER(10) ToothMaxWidth:ADAPTER(8) ToothMinWidth:ADAPTER(4)];
     
     drivenGear_B.fillColor = [UIColor colorWithRed:213/255.0f green:85/255.0f blue:80/255.0f alpha:1.0f];
     
-    [self.mainGear addDrivenGear:drivenGear_B Angle:135.0f Spacing:2.0f];
+    [self.mainGear addDrivenGear:drivenGear_B Angle:135.0f Spacing:ADAPTER(2.0f)];
     
     
-    GearView *drivenGear_C = [GearView gearWithToothCount:40 ToothHeight:ADAPTER(8) ToothMaxWidth:ADAPTER(8) ToothMinWidth:ADAPTER(4)];
+    GearView *drivenGear_C = [GearView gearWithToothCount:36 ToothHeight:ADAPTER(10) ToothMaxWidth:ADAPTER(8) ToothMinWidth:ADAPTER(4)];
     
     drivenGear_C.fillColor = [UIColor colorWithRed:193/255.0f green:63/255.0f blue:62/255.0f alpha:1.0f];
     
-    [drivenGear_A addDrivenGear:drivenGear_C Angle:47.0f Spacing:4.0f];
+    [drivenGear_A addDrivenGear:drivenGear_C Angle:44.0f Spacing:ADAPTER(4.0f)];
     
-    GearView *drivenGear_D = [GearView gearWithToothCount:40 ToothHeight:ADAPTER(8) ToothMaxWidth:ADAPTER(8) ToothMinWidth:ADAPTER(4)];
+    GearView *drivenGear_D = [GearView gearWithToothCount:36 ToothHeight:ADAPTER(10) ToothMaxWidth:ADAPTER(8) ToothMinWidth:ADAPTER(4)];
     
     drivenGear_D.fillColor = [UIColor colorWithRed:193/255.0f green:63/255.0f blue:62/255.0f alpha:1.0f];
     
-    [drivenGear_B addDrivenGear:drivenGear_D Angle:225.0f Spacing:4.0f];
+    [drivenGear_B addDrivenGear:drivenGear_D Angle:225.0f Spacing:ADAPTER(4.0f)];
     
     
     // 左右线条视图
@@ -191,32 +195,24 @@
 - (void)executeRefreshingCallback{
     
     [super executeRefreshingCallback];
-    
-    [self.mainGear rotationAnimationWithDuration:1.0f];
 }
 
 - (void)endRefreshing{
     
-    self.isEnd = YES;
-    
     dispatch_async(dispatch_get_main_queue(), ^{
-       
+      
+        self.isEnd = YES;
+        
         [self.mainGear removeRotationAnimationWithInstant:YES];
         
-        [UIView animateWithDuration:0.3f delay:0.0f options:UIViewAnimationOptionLayoutSubviews | UIViewAnimationOptionOverrideInheritedOptions animations:^{
+        [super endRefreshing];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
             
-//            self.mainGear.layer.transform = CATransform3DMakeScale(0.0, 0.0, 0.0);
+            self.isEnd = NO;
             
-        } completion:^(BOOL finished) {
-            
-            [super endRefreshing];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                self.isEnd = NO;
-            });
-            
-        }];
+            self.mainGear.clockwise = NO;
+        });
         
     });
     
@@ -236,7 +232,11 @@
             
             break;
         case MJRefreshStateRefreshing:
-           
+            
+            self.mainGear.clockwise = YES;
+            
+            [self.mainGear rotationAnimationWithDuration:2.0f];
+            
             break;
         default:
             break;
@@ -249,7 +249,12 @@
     
     [super setPullingPercent:pullingPercent];
     
-    [self.mainGear rotationWithAngle:360 * pullingPercent];
+    if (!self.isEnd) {
+        
+        [self.mainGear rotationWithAngle:(pullingPercent - self.lastPullingPercent) * 180.0f];
+    }
+    
+    self.lastPullingPercent = pullingPercent;
 }
 
 @end

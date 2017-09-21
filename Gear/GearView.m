@@ -12,8 +12,6 @@
 
 @property (nonatomic , assign ) CGPathRef gearPath;
 
-@property (nonatomic , assign ) CGFloat currentAngle;
-
 @end
 
 @implementation GearView
@@ -85,6 +83,8 @@
         _centerRadius = 0.0f;
         
         _centerWitdh = 0.0f;
+        
+        _clockwise = YES;
         
         [self gearPath];
         
@@ -428,16 +428,14 @@
 
 - (void)rotationWithAngle:(CGFloat)angle{
     
-    self.currentAngle = angle;
-    
     CGFloat radian = M_PI / 180 * angle;
     
-    [self rotationWithRadian:radian];
+    [self rotationWithRadian: self.clockwise ? radian : -radian];
 }
 
 - (void)rotationWithRadian:(CGFloat)radian{
     
-    self.transform = CGAffineTransformMakeRotation(-(radian - self.initialRadian));
+    self.transform = CGAffineTransformRotate(self.transform, radian);
     
     // 从动齿轮数 = 主动齿轮数 * 速度 / 从动齿轮数
     
@@ -450,33 +448,26 @@
 
 - (void)rotationAnimationWithDuration:(CGFloat)duration{
     
+    if (duration < 1.0f) duration = 1.0f;
+    
     isRotationAnimation = YES;
     
-    [self rotationAnimationWithDuration:duration Angle:90.0f CurrentAngle:self.currentAngle + 90.0f];
+    [self rotationAnimationWithDuration:duration / 100.0f Angle:3.6f];
 }
 
-- (void)rotationAnimationWithDuration:(CGFloat)duration Angle:(CGFloat)angle CurrentAngle:(CGFloat)currentAngle{
+- (void)rotationAnimationWithDuration:(CGFloat)duration Angle:(CGFloat)angle{
+    
+    if (angle > 180.0f) angle = 180.0f;
     
     [UIView animateWithDuration:duration delay:0 options:UIViewAnimationCurveLinear | UIViewAnimationOptionAllowUserInteraction animations:^{
         
-        [UIView setAnimationCurve:UIViewAnimationCurveLinear];
-        
-        [self rotationWithAngle:currentAngle];
+        [self rotationWithAngle:angle];
         
     } completion:^(BOOL finished) {
        
         if (!finished) return ;
         
-        // 如果可以整除360度 重置当前度数
-        
-        if (fmodf(currentAngle , 360.0f) == 0) {
-            
-            self.currentAngle = 0;
-            
-            [self rotationWithAngle:self.currentAngle];
-        }
-        
-        if (isRotationAnimation) [self rotationAnimationWithDuration:duration Angle:angle CurrentAngle:self.currentAngle + angle];
+        if (isRotationAnimation) [self rotationAnimationWithDuration:duration Angle:angle];
     }];
     
 }
@@ -610,15 +601,15 @@
     
     CGFloat mainNearestRadian = [mainNearestRadianNumber floatValue];
     
-    mainNearestRadian += self.initialRadian; //加上主动齿轮初始弧度的偏差
-    
     BOOL isTooth = [self.toothRadianArray containsObject:mainNearestRadianNumber]; // 是否为轮齿 用于判断主动齿轮最近接的位置是轮齿还是缺口
     
     // 计算主动齿轮最接近的坐标点 (包括两个齿轮的间距)
     
-    CGPoint mainNearestPoint = [self getPointWithRadius:isTooth ? mainRadius + spacing : mainRadius + spacing - self.toothHeight Radian:mainNearestRadian];
+    CGFloat halfSpacing = spacing * 0.5f;
     
-    mainNearestPoint = CGPointMake(mainNearestPoint.x + self.center.x - mainRadius - spacing, mainNearestPoint.y + self.center.y - mainRadius - spacing);
+    CGPoint mainNearestPoint = [self getPointWithRadius:isTooth ? mainRadius + halfSpacing : mainRadius + halfSpacing - self.toothHeight Radian:mainNearestRadian];
+    
+    mainNearestPoint = CGPointMake(mainNearestPoint.x + self.center.x - mainRadius - halfSpacing, mainNearestPoint.y + self.center.y - mainRadius - halfSpacing);
     
     if (!isTooth) mainNearestPoint.x += self.toothHeight;
     
@@ -630,11 +621,16 @@
     
     CGFloat drivenNearestOffsetRadian = drivenNearestRadian - [[self getNearestNumberWithArray:isTooth ? drivenGear.gapRadianArray : drivenGear.toothRadianArray Number:@(drivenNearestRadian)] floatValue]; //从动齿轮偏移弧度 = 主动齿轮最接近点的坐标较从动齿轮的弧度 - 从动齿轮的轮齿或缺口最接近的弧度
     
-    drivenGear.transform = CGAffineTransformMakeRotation(drivenNearestOffsetRadian);
+    // 计算从动齿轮初始弧度 (根据主动齿轮弧度计算)
     
-    drivenGear.initialRadian = drivenNearestOffsetRadian;
+    CGFloat drivenInitialRadian = acosf(self.transform.a) * self.toothCount / drivenGear.toothCount;
     
-    /** 计算从动齿轮最接近的坐标 (调试使用) */
+    drivenGear.transform = CGAffineTransformMakeRotation(self.transform.b < 0 ? drivenInitialRadian : -drivenInitialRadian);
+    
+    drivenGear.transform = CGAffineTransformRotate(drivenGear.transform, drivenNearestOffsetRadian);
+    
+    
+    /** 计算从动齿轮最接近的坐标 (调试使用)  */
     
     CGPoint drivenNearestPoint = [self getPointWithRadius:isTooth ? drivenRadius - drivenGear.toothHeight : drivenRadius Radian:drivenNearestRadian];
     
@@ -643,6 +639,27 @@
     if (isTooth) drivenNearestPoint.x += drivenGear.toothHeight;
     
     if (isTooth) drivenNearestPoint.y += drivenGear.toothHeight;
+    /*
+    {
+        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 1, 1)];
+        
+        view.center = mainNearestPoint;
+        
+        view.backgroundColor = [UIColor blueColor];
+        
+        [self.superview addSubview:view];
+    }
+    
+    {
+        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 1, 1)];
+        
+        view.center = drivenNearestPoint;
+        
+        view.backgroundColor = [UIColor redColor];
+        
+        [self.superview addSubview:view];
+    }
+     */
 }
 
 #pragma mark - 获取数组中最接近的值

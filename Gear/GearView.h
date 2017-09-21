@@ -24,6 +24,8 @@
 
 @property (nonatomic , assign ) CGFloat centerWitdh; //圆心线宽度
 
+@property (nonatomic , assign ) BOOL clockwise; //顺时针方向旋转
+
 @property (nonatomic , strong ) NSMutableArray *drivenGears; //从动齿轮数组
 
 /**
@@ -43,25 +45,24 @@
 /**
  旋转 (仅主动齿轮调用)
 
- @param angle 旋转角度 0 - 360度
+ @param angle 旋转角度 0 - 180度
  */
 - (void)rotationWithAngle:(CGFloat)angle;
 
 /**
- 旋转动画
+ 旋转动画 (仅主动齿轮调用)
  
- @param duration 每旋转90度的动画时长
+ @param duration 旋转一周的动画时长 > 1.0
  */
 - (void)rotationAnimationWithDuration:(CGFloat)duration;
 
 /**
- 移除旋转动画
+ 移除旋转动画 (仅主动齿轮调用)
  */
 - (void)removeRotationAnimation;
 
-
 /**
- 移除旋转动画
+ 移除旋转动画 (仅主动齿轮调用)
 
  @param instant 是否立即移除
  */
@@ -119,8 +120,6 @@
 @property (nonatomic , strong , readonly ) NSArray *toothRadianArray; //轮齿弧度数组
 
 @property (nonatomic , strong , readonly ) NSArray *gapRadianArray; //缺口弧度数组
-
-@property (nonatomic , assign ) CGFloat initialRadian; //初始弧度
 
 @property (nonatomic , assign ) CGFloat mainAngle; //相对于主齿轮的角度
 

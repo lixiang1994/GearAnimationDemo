@@ -24,6 +24,8 @@
 
 @property (nonatomic , strong ) UISlider *sliderView; //滑块视图
 
+@property (nonatomic , assign ) CGFloat lastSliderValue; //上一次滑动值
+
 @property (nonatomic , weak ) GearView *selectedGear; //选中齿轮
 
 @property (nonatomic , assign ) BOOL isAnimation; //是否在动画
@@ -78,7 +80,7 @@
     
     // 默认动画时长
     
-    _animationDuration = 2.0f;
+    _animationDuration = 5.0f;
     
     // 初始化子视图
     
@@ -249,7 +251,7 @@
     .LeeTitle(@"设置")
     .LeeAddTextField(^(UITextField *textField) {
         
-        textField.placeholder = @"旋转90度动画时长 (默认2秒)";
+        textField.placeholder = @"旋转一周的动画时长 (默认5秒)";
         
         textField.keyboardType = UIKeyboardTypeNumberPad;
         
@@ -401,7 +403,9 @@
     
     [self.sliderView showMessage:[NSString stringWithFormat:@"当前 %.f度" , slider.value]];
     
-    [self.mainGear rotationWithAngle:slider.value];
+    [self.mainGear rotationWithAngle:slider.value - self.lastSliderValue];
+    
+    self.lastSliderValue = slider.value;
 }
 
 - (void)didReceiveMemoryWarning {
