@@ -18,6 +18,12 @@
 
 @implementation DemoViewController
 
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
+    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -77,5 +83,10 @@
     // Pass the selected object to the new view controller.
 }
 */
+
+- (UIStatusBarStyle)preferredStatusBarStyle{
+    
+    return UIStatusBarStyleLightContent;
+}
 
 @end

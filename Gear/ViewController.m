@@ -57,6 +57,12 @@
     CGFloat drivenGear_A_Angle;
 }
 
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
+    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
+}
+
 - (void)viewDidDisappear:(BOOL)animated{
     
     [super viewDidDisappear:animated];

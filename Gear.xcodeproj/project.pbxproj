@@ -203,6 +203,8 @@
 				9B1081671F58067B00D3A7E2 /* AppDelegate.m */,
 				9B1081691F58067B00D3A7E2 /* ViewController.h */,
 				9B10816A1F58067B00D3A7E2 /* ViewController.m */,
+				9B85A1C81F71099000764280 /* DemoViewController.h */,
+				9B85A1C91F71099000764280 /* DemoViewController.m */,
 				9B10816C1F58067B00D3A7E2 /* Main.storyboard */,
 				9B10816F1F58067B00D3A7E2 /* Assets.xcassets */,
 				9B1081711F58067B00D3A7E2 /* LaunchScreen.storyboard */,
@@ -214,8 +216,6 @@
 				9B10817B1F5806F900D3A7E2 /* GearView.m */,
 				9BD980D11F70F238002D914D /* MJRefreshGearHeader.h */,
 				9BD980D21F70F238002D914D /* MJRefreshGearHeader.m */,
-				9B85A1C81F71099000764280 /* DemoViewController.h */,
-				9B85A1C91F71099000764280 /* DemoViewController.m */,
 			);
 			path = Gear;
 			sourceTree = "<group>";
@@ -523,6 +523,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = QCC328325S;
 				INFOPLIST_FILE = Gear/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.lee.gear.Gear;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -535,6 +536,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = QCC328325S;
 				INFOPLIST_FILE = Gear/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.lee.gear.Gear;
 				PRODUCT_NAME = "$(TARGET_NAME)";

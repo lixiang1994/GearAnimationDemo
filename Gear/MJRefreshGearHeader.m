@@ -10,6 +10,9 @@
 
 #import "GearView.h"
 
+#define ADAPTER(n) (([UIScreen mainScreen].bounds.size.width) / 320.0f * n)
+
+
 @interface MJRefreshGearHeader()
 
 @property (nonatomic , strong ) UIView *view;
@@ -36,7 +39,7 @@
     
     // 设置控件的高度
     
-    self.mj_h = 110.0f;
+    self.mj_h = ADAPTER(80.0f);
     
     _view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, 0)];
     
@@ -48,36 +51,36 @@
     
     // 主动齿轮
     
-    _mainGear = [GearView gearWithToothCount:10 ToothHeight:6 ToothMaxWidth:12 ToothMinWidth:6];
+    _mainGear = [GearView gearWithToothCount:10 ToothHeight:ADAPTER(4) ToothMaxWidth:ADAPTER(8) ToothMinWidth:ADAPTER(4)];
     
     _mainGear.fillColor = [UIColor colorWithRed:231/255.0f green:103/255.0f blue:94/255.0f alpha:1.0f];
     
-    _mainGear.centerRadius = 9.0f;
+    _mainGear.centerRadius = ADAPTER(7.0f);
     
     [self.view addSubview:_mainGear];
     
     // 从动齿轮
     
-    GearView *drivenGear_A = [GearView gearWithToothCount:23 ToothHeight:10 ToothMaxWidth:10 ToothMinWidth:5];
+    GearView *drivenGear_A = [GearView gearWithToothCount:23 ToothHeight:ADAPTER(8) ToothMaxWidth:ADAPTER(8) ToothMinWidth:ADAPTER(4)];
     
     drivenGear_A.fillColor = [UIColor colorWithRed:213/255.0f green:85/255.0f blue:80/255.0f alpha:1.0f];
     
     [self.mainGear addDrivenGear:drivenGear_A Angle:315.0f Spacing:2.0f];
     
-    GearView *drivenGear_B = [GearView gearWithToothCount:23 ToothHeight:10 ToothMaxWidth:10 ToothMinWidth:5];
+    GearView *drivenGear_B = [GearView gearWithToothCount:23 ToothHeight:ADAPTER(8) ToothMaxWidth:ADAPTER(8) ToothMinWidth:ADAPTER(4)];
     
     drivenGear_B.fillColor = [UIColor colorWithRed:213/255.0f green:85/255.0f blue:80/255.0f alpha:1.0f];
     
     [self.mainGear addDrivenGear:drivenGear_B Angle:135.0f Spacing:2.0f];
     
     
-    GearView *drivenGear_C = [GearView gearWithToothCount:40 ToothHeight:10 ToothMaxWidth:10 ToothMinWidth:5];
+    GearView *drivenGear_C = [GearView gearWithToothCount:40 ToothHeight:ADAPTER(8) ToothMaxWidth:ADAPTER(8) ToothMinWidth:ADAPTER(4)];
     
     drivenGear_C.fillColor = [UIColor colorWithRed:193/255.0f green:63/255.0f blue:62/255.0f alpha:1.0f];
     
     [drivenGear_A addDrivenGear:drivenGear_C Angle:47.0f Spacing:4.0f];
     
-    GearView *drivenGear_D = [GearView gearWithToothCount:40 ToothHeight:10 ToothMaxWidth:10 ToothMinWidth:5];
+    GearView *drivenGear_D = [GearView gearWithToothCount:40 ToothHeight:ADAPTER(8) ToothMaxWidth:ADAPTER(8) ToothMinWidth:ADAPTER(4)];
     
     drivenGear_D.fillColor = [UIColor colorWithRed:193/255.0f green:63/255.0f blue:62/255.0f alpha:1.0f];
     
@@ -196,22 +199,26 @@
     
     self.isEnd = YES;
     
-    [self.mainGear removeRotationAnimationWithInstant:YES];
-    
-    [UIView animateWithDuration:2.2f animations:^{
+    dispatch_async(dispatch_get_main_queue(), ^{
+       
+        [self.mainGear removeRotationAnimationWithInstant:YES];
         
-        // 有问题 待解决
-//        self.mainGear.layer.transform = CATransform3DMakeScale(0.1, 0.1, 0);
-        
-    } completion:^(BOOL finished) {
-        
-        [super endRefreshing];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
+        [UIView animateWithDuration:0.3f delay:0.0f options:UIViewAnimationOptionLayoutSubviews | UIViewAnimationOptionOverrideInheritedOptions animations:^{
             
-            self.isEnd = NO;
-        });
-    }];
+//            self.mainGear.layer.transform = CATransform3DMakeScale(0.0, 0.0, 0.0);
+            
+        } completion:^(BOOL finished) {
+            
+            [super endRefreshing];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                self.isEnd = NO;
+            });
+            
+        }];
+        
+    });
     
 }
 

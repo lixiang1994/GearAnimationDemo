@@ -48,11 +48,11 @@
             </objects>
             <point key="canvasLocation" x="818.39999999999998" y="130.88455772113943"/>
         </scene>
-        <!--Item-->
+        <!--演示-->
         <scene sceneID="Xgs-IP-V4N">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Rh5-1I-N75" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="aSq-iN-IxA"/>
+                    <tabBarItem key="tabBarItem" title="演示" id="aSq-iN-IxA"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="W8Q-Xd-WHM">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
@@ -86,15 +86,17 @@
             </objects>
             <point key="canvasLocation" x="-585" y="131"/>
         </scene>
-        <!--Item-->
+        <!--刷新-->
         <scene sceneID="rmS-g8-Az1">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="cuV-fo-WrU" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="fPU-gv-RRt"/>
+                    <tabBarItem key="tabBarItem" title="刷新" id="fPU-gv-RRt"/>
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="lLr-qF-sNL">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" barStyle="black" translucent="NO" id="lLr-qF-sNL">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" red="0.96078431372549022" green="0.4392156862745098" blue="0.41176470588235292" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="barTintColor" red="0.96078431369999995" green="0.43921568630000002" blue="0.41176470590000003" alpha="1" colorSpace="calibratedRGB"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
@@ -110,11 +112,11 @@
             <objects>
                 <viewController id="J6E-qY-Xdt" customClass="DemoViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ruo-Pp-06t">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="1i1-rY-GtZ">
-                                <rect key="frame" x="0.0" y="64" width="375" height="554"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="554"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="cell" id="Vmp-QA-RdF">
@@ -159,7 +161,11 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="fIJ-JT-2ia"/>
                     </view>
-                    <navigationItem key="navigationItem" id="wjC-Fh-8id"/>
+                    <navigationItem key="navigationItem" id="wjC-Fh-8id">
+                        <barButtonItem key="leftBarButtonItem" image="m" id="8wl-Fk-tWn">
+                            <color key="tintColor" red="0.96078431369999995" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="1i1-rY-GtZ" id="Jgv-T2-PHK"/>
                     </connections>
@@ -169,4 +175,7 @@
             <point key="canvasLocation" x="112.8" y="936.88155922038993"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="m" width="22" height="22"/>
+    </resources>
 </document>
