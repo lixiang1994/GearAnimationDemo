@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9B03B1FD1F70BAC90095E587 /* LEEAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B03B1C11F70BA940095E587 /* LEEAlert.m */; };
 		9B03B1FE1F70BACC0095E587 /* HUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B03B1FC1F70BA9B0095E587 /* HUD.m */; };
 		9B03B1FF1F70BAD00095E587 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B03B1C61F70BA940095E587 /* MBProgressHUD.m */; };
 		9B1081651F58067B00D3A7E2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B1081641F58067B00D3A7E2 /* main.m */; };
@@ -38,12 +37,10 @@
 		9BD981121F7103B7002D914D /* UIScrollView+MJExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BD980D51F710399002D914D /* UIScrollView+MJExtension.m */; };
 		9BD981131F7103B7002D914D /* UIScrollView+MJRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BD980FF1F71039A002D914D /* UIScrollView+MJRefresh.m */; };
 		9BD981141F7103B7002D914D /* UIView+MJExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BD980D41F710399002D914D /* UIView+MJExtension.m */; };
+		C9257D9721F2140100C4B175 /* LEEAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = C9257D9521F2140100C4B175 /* LEEAlert.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		9B03B1C01F70BA940095E587 /* LEEAlert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LEEAlert.h; sourceTree = "<group>"; };
-		9B03B1C11F70BA940095E587 /* LEEAlert.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LEEAlert.m; sourceTree = "<group>"; };
-		9B03B1C21F70BA940095E587 /* LEEAlertHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LEEAlertHelper.h; sourceTree = "<group>"; };
 		9B03B1C41F70BA940095E587 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		9B03B1C51F70BA940095E587 /* MBProgressHUD.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
 		9B03B1C61F70BA940095E587 /* MBProgressHUD.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
@@ -106,6 +103,9 @@
 		9BD980FF1F71039A002D914D /* UIScrollView+MJRefresh.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+MJRefresh.m"; sourceTree = "<group>"; };
 		9BD981001F71039A002D914D /* NSBundle+MJRefresh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSBundle+MJRefresh.h"; sourceTree = "<group>"; };
 		9BD981011F71039A002D914D /* UIScrollView+MJRefresh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+MJRefresh.h"; sourceTree = "<group>"; };
+		C9257D9421F2140100C4B175 /* LEEAlertHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEEAlertHelper.h; sourceTree = "<group>"; };
+		C9257D9521F2140100C4B175 /* LEEAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LEEAlert.m; sourceTree = "<group>"; };
+		C9257D9621F2140100C4B175 /* LEEAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEEAlert.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,21 +122,11 @@
 		9B03B1BE1F70BA940095E587 /* Librarys */ = {
 			isa = PBXGroup;
 			children = (
-				9B03B1BF1F70BA940095E587 /* LEEAlert */,
+				C9257D9321F2140100C4B175 /* LEEAlert */,
 				9B03B1C31F70BA940095E587 /* MBProgressHUD */,
 				9B03B1C81F70BA940095E587 /* MJRefresh */,
 			);
 			path = Librarys;
-			sourceTree = "<group>";
-		};
-		9B03B1BF1F70BA940095E587 /* LEEAlert */ = {
-			isa = PBXGroup;
-			children = (
-				9B03B1C01F70BA940095E587 /* LEEAlert.h */,
-				9B03B1C11F70BA940095E587 /* LEEAlert.m */,
-				9B03B1C21F70BA940095E587 /* LEEAlertHelper.h */,
-			);
-			path = LEEAlert;
 			sourceTree = "<group>";
 		};
 		9B03B1C31F70BA940095E587 /* MBProgressHUD */ = {
@@ -302,6 +292,16 @@
 			path = Base;
 			sourceTree = "<group>";
 		};
+		C9257D9321F2140100C4B175 /* LEEAlert */ = {
+			isa = PBXGroup;
+			children = (
+				C9257D9421F2140100C4B175 /* LEEAlertHelper.h */,
+				C9257D9521F2140100C4B175 /* LEEAlert.m */,
+				C9257D9621F2140100C4B175 /* LEEAlert.h */,
+			);
+			path = LEEAlert;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -333,7 +333,7 @@
 				TargetAttributes = {
 					9B10815F1F58067B00D3A7E2 = {
 						CreatedOnToolsVersion = 8.3.3;
-						DevelopmentTeam = 3GNXU2LRUU;
+						DevelopmentTeam = 683UGRW72Z;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -397,7 +397,7 @@
 				9B03B1FF1F70BAD00095E587 /* MBProgressHUD.m in Sources */,
 				9B03B1FE1F70BACC0095E587 /* HUD.m in Sources */,
 				9B85A1CA1F71099000764280 /* DemoViewController.m in Sources */,
-				9B03B1FD1F70BAC90095E587 /* LEEAlert.m in Sources */,
+				C9257D9721F2140100C4B175 /* LEEAlert.m in Sources */,
 				9B10816B1F58067B00D3A7E2 /* ViewController.m in Sources */,
 				9B1081681F58067B00D3A7E2 /* AppDelegate.m in Sources */,
 				9B1081651F58067B00D3A7E2 /* main.m in Sources */,
@@ -537,7 +537,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 3GNXU2LRUU;
+				DEVELOPMENT_TEAM = 683UGRW72Z;
 				INFOPLIST_FILE = Gear/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -550,7 +550,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 3GNXU2LRUU;
+				DEVELOPMENT_TEAM = 683UGRW72Z;
 				INFOPLIST_FILE = Gear/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
