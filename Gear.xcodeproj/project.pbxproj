@@ -37,7 +37,7 @@
 		9BD981121F7103B7002D914D /* UIScrollView+MJExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BD980D51F710399002D914D /* UIScrollView+MJExtension.m */; };
 		9BD981131F7103B7002D914D /* UIScrollView+MJRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BD980FF1F71039A002D914D /* UIScrollView+MJRefresh.m */; };
 		9BD981141F7103B7002D914D /* UIView+MJExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BD980D41F710399002D914D /* UIView+MJExtension.m */; };
-		C9257D9721F2140100C4B175 /* LEEAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = C9257D9521F2140100C4B175 /* LEEAlert.m */; };
+		C92451A52297A2E7005EC0FA /* LEEAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = C92451A22297A2E6005EC0FA /* LEEAlert.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -103,9 +103,9 @@
 		9BD980FF1F71039A002D914D /* UIScrollView+MJRefresh.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+MJRefresh.m"; sourceTree = "<group>"; };
 		9BD981001F71039A002D914D /* NSBundle+MJRefresh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSBundle+MJRefresh.h"; sourceTree = "<group>"; };
 		9BD981011F71039A002D914D /* UIScrollView+MJRefresh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+MJRefresh.h"; sourceTree = "<group>"; };
-		C9257D9421F2140100C4B175 /* LEEAlertHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEEAlertHelper.h; sourceTree = "<group>"; };
-		C9257D9521F2140100C4B175 /* LEEAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LEEAlert.m; sourceTree = "<group>"; };
-		C9257D9621F2140100C4B175 /* LEEAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEEAlert.h; sourceTree = "<group>"; };
+		C92451A22297A2E6005EC0FA /* LEEAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LEEAlert.m; sourceTree = "<group>"; };
+		C92451A32297A2E6005EC0FA /* LEEAlertHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEEAlertHelper.h; sourceTree = "<group>"; };
+		C92451A42297A2E7005EC0FA /* LEEAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEEAlert.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -295,9 +295,9 @@
 		C9257D9321F2140100C4B175 /* LEEAlert */ = {
 			isa = PBXGroup;
 			children = (
-				C9257D9421F2140100C4B175 /* LEEAlertHelper.h */,
-				C9257D9521F2140100C4B175 /* LEEAlert.m */,
-				C9257D9621F2140100C4B175 /* LEEAlert.h */,
+				C92451A42297A2E7005EC0FA /* LEEAlert.h */,
+				C92451A22297A2E6005EC0FA /* LEEAlert.m */,
+				C92451A32297A2E6005EC0FA /* LEEAlertHelper.h */,
 			);
 			path = LEEAlert;
 			sourceTree = "<group>";
@@ -328,7 +328,7 @@
 		9B1081581F58067B00D3A7E2 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = lee;
 				TargetAttributes = {
 					9B10815F1F58067B00D3A7E2 = {
@@ -340,7 +340,7 @@
 			};
 			buildConfigurationList = 9B10815B1F58067B00D3A7E2 /* Build configuration list for PBXProject "Gear" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -397,7 +397,7 @@
 				9B03B1FF1F70BAD00095E587 /* MBProgressHUD.m in Sources */,
 				9B03B1FE1F70BACC0095E587 /* HUD.m in Sources */,
 				9B85A1CA1F71099000764280 /* DemoViewController.m in Sources */,
-				C9257D9721F2140100C4B175 /* LEEAlert.m in Sources */,
+				C92451A52297A2E7005EC0FA /* LEEAlert.m in Sources */,
 				9B10816B1F58067B00D3A7E2 /* ViewController.m in Sources */,
 				9B1081681F58067B00D3A7E2 /* AppDelegate.m in Sources */,
 				9B1081651F58067B00D3A7E2 /* main.m in Sources */,
@@ -431,6 +431,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -487,6 +488,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -541,7 +543,7 @@
 				INFOPLIST_FILE = Gear/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.lee.gear.Gear;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lee.gear.demo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -554,7 +556,7 @@
 				INFOPLIST_FILE = Gear/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.lee.gear.Gear;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lee.gear.demo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
